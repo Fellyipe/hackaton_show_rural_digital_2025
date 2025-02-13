@@ -6,3 +6,5 @@ with open('C:/Users/Felipe/Downloads/RELATORIO DE FREQUENCIA DE DEFESAS.pdf', 'r
     # Extrair texto de cada página
     for page in reader.pages:
         print(page.extract_text())
+
+
