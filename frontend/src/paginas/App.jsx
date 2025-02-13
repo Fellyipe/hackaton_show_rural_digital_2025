@@ -1,12 +1,21 @@
 import React from 'react';
-import AnalisePotassio from './telaAgronomo/AnalisePotassio';
+import { useNavigate } from 'react-router';
 
-const App= () => {
+function App() {
+ let navigate = useNavigate();
+
     return (
-        <div>
-            <h1>Welcome to Hackaton Show Rural Digital 2025</h1>
-            <AnalisePotassio/>
+      <div className="w-full flex flex-col h-screen items-center justify-center">
+        <div className="flex flex-col items-center justify-between h-1/4">
+          <h1 className="text-5xl">Bem Vindo</h1>
+          <button
+            onClick={() => navigate("/analisePotassio")}
+            className="bg-primary w-40 h-10 rounded-md text-white"
+          >
+            Entrar
+          </button>
         </div>
+      </div>
     );
 }
 

@@ -3,12 +3,14 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import { BrowserRouter, Route,Routes } from "react-router";
 import App from './paginas/App'
+import AnalisePotassio from './paginas/telaAgronomo/AnalisePotassio';
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/analisePotassio" element={<AnalisePotassio />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
