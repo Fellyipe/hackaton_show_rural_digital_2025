@@ -2,7 +2,7 @@ import { List } from "@phosphor-icons/react";
 
 import Footer from "../../components/footer/Footer";
 
-function AnalisePotassio() {
+function TelaAgronomo() {
   return (
     <div>
       <header className="bg-white-green w-full flex flex-col p-4">
@@ -21,4 +21,4 @@ function AnalisePotassio() {
   );
 }
 
-export default AnalisePotassio;
+export default TelaAgronomo;
