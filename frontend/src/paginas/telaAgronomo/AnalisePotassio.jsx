@@ -1,8 +1,22 @@
+import { List } from "@phosphor-icons/react";
 
 function AnalisePotassio(){
     return (
         <div>
-            <h1>Analise de Potassio</h1>
+            <header>
+                <button>
+                    <List/>
+                </button>
+            </header>
+            <main>
+                <div>
+
+                </div>
+                <div>
+
+                </div>
+
+            </main>
         </div>
     )
 }
