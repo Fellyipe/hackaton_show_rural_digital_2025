@@ -38,10 +38,8 @@ function Registro() {
         nome: formData.email,
         cpf: formData.cpf,
         senha: formData.password,
+        crea: formData.agronomo ? formData.cref : null,
       });
-
-      const dados = await resposta.json();
-      alert(dados);
 
       if (response.data.tipo) {
         alert(`Login bem-sucedido! Tipo: ${response.data.tipo}`);
