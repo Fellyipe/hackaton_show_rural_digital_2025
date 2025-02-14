@@ -131,15 +131,14 @@ def save_analysis(analiseId, averages):
             # Certificando-se de que são strings onde necessário
             param = str(param)
             value = str(value)
-            id = analiseId
             classificacao = str(classificacao)
-
+            id = analiseId
             # Atualiza a análise existente com os novos valores
             cursor.execute(
                 """UPDATE Analises 
                    SET parametro = ?, valor = ?, data = ?, classificacao = ? 
-                   WHERE id = ?""",
-                (param, value, data_atual, classificacao, analiseId)
+                   WHERE id = """,
+                (param, value, data_atual, classificacao)
             )
 
             # Se a análise não existir, insere uma nova
@@ -348,7 +347,7 @@ def registrar_analise():
 
         return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
 
-@app.route('/atualizar_analise', methods=['PUT'])
+@app.route('/atualizar_analise/<int:analise_id>', methods=['PUT'])
 def atualizar_analise(analise_id):
     """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
 
