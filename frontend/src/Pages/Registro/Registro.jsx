@@ -13,16 +13,25 @@ function Registro() {
 
   const handleChange = (e) => {
     const { id, type, checked, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: type === "checkbox" ? checked : value,
-    }));
+
+    setFormData((prev) => {
+      if (type === "checkbox") {
+        return {
+          ...prev,
+          produtor: id === "produtor" ? checked : false,
+          agronomo: id === "agronomo" ? checked : false,
+          cref: id === "agronomo" && checked ? prev.cref : "",
+        };
+      }
+      return { ...prev, [id]: value };
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    //TODO Implementar a lógica de registro
+    
     console.log("Dados enviados:", formData);
-    // Aqui você pode chamar uma API para enviar os dados
   };
 
   return (
@@ -74,7 +83,6 @@ function Registro() {
           </div>
         </div>
 
-        {/* Campo adicional para agrônomos */}
         {formData.agronomo && (
           <div>
             <input
