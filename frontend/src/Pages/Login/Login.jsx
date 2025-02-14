@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
-import Logo from "/public/logo.png";
+import Logo from "/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
 
 import api from "../../services/api.js";
@@ -26,9 +26,15 @@ function Login() {
       });
 
       console.log("Login bem-sucedido:", response.data);
+      if (response.data.tipo == "agronomo") {
+        localStorage.setItem("agronomo_id", response.data.id);
 
-      // Redireciona o usuário após o login bem-sucedido
-      navigate("/listaProdutores");
+        navigate("/listaProdutores");
+      } else {
+        localStorage.setItem("produtor_id", response.data.id);
+
+        navigate("/TelaProdutor");
+      }
     } catch (error) {
       console.error("Erro no login:", error);
       setError(error.response?.data?.erro || "Erro ao realizar login");
@@ -45,7 +51,7 @@ function Login() {
           <input
             className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
             id="cpf"
-            type="text"
+            type="number"
             placeholder="Cpf"
             value={cpf}
             onChange={(e) => setCpf(e.target.value)}
