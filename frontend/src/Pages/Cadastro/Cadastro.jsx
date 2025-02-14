@@ -46,7 +46,10 @@ function Registro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-
+    if(!formData.email || !formData.cpf || !formData.password || (!formData.produtor && !formData.agronomo)) {
+      setError("Preencha todos os campos");
+      return;
+    }
     if (!validateCPF(formData.cpf)) {
       setError("CPF inválido");
       return;
@@ -70,7 +73,7 @@ function Registro() {
       navigate("/Login");
     } catch (error) {
       console.error("Erro ao registrar", error);
-      alert("Erro ao tentar registrar. Verifique os dados.");
+      setError(error.response?.data?.erro || "Erro ao realizar login");
     }
   };
 
