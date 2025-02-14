@@ -5,7 +5,6 @@ import api from "../../services/api.js";
 import { useNavigate } from "react-router";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 
-
 function Registro() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
@@ -133,7 +132,7 @@ function Registro() {
               className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
               id="cref"
               type="text"
-              placeholder="CREF do Agrônomo"
+              placeholder="CREA do Agrônomo"
               value={formData.cref}
               onChange={handleChange}
             />
