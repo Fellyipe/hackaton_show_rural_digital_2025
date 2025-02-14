@@ -23,8 +23,8 @@ function ListaProdutores() {
   return (
     <>
       <div className="max-w-3xl mx-auto p-4 mb-10">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          Lista de produtores
+        <h1 className="text-3xl font-bold text-bold-text mb-6 text-center mt-10">
+          Seus produtores
         </h1>
         <div className="space-y-4">
           {produtores.map((produtor) => (
