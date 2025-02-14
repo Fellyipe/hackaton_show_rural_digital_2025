@@ -7,14 +7,14 @@ function AddAnalise() {
   function handleFileUpload(file) {
     console.log("Arquivo recebido:", file);
   }
-  
+
   return (
     <div>
-      <main className="bg-primary w-full h-screen mt-40 rounded-t-2xl p-4">
+      <main className="bg-primary w-full mt-40 rounded-t-2xl p-4">
         <div className="flex w-full justify-end items-end">
           <img className="-mt-40 size-48" src={Ground} alt="sprout" />
         </div>
-        <div className="gap-5 flex flex-col items-center justify-center w-full">
+        <div className="px-6 gap-5 flex flex-col items-start justify-center w-full">
           <span className="text-3xl text-emerald font-bold">
             Analise de Potassio(K)
           </span>
@@ -39,7 +39,7 @@ function AddAnalise() {
 
           <div className="flex flex-col gap-5">
             <p className="text-xl text-emerald">Recomendação de compra</p>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-3">
               <input
                 placeholder="Nome da Cooperativa ou Empresa"
                 type="text"
