@@ -16,7 +16,7 @@ function App() {
 
       <div className="flex flex-col items-center gap-5">
         <button
-          onClick={() => navigate("/Login")}
+          onClick={() => navigate("/ListaProdutores")}
           className="bg-primary w-52 h-12 rounded-md font-bold text-white text-xl"
         >
           Fazer Login

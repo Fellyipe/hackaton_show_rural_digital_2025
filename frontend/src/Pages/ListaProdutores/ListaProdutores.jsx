@@ -1,32 +1,43 @@
 import React from "react";
-import IncidentCard from "./IncidentCard";
+import ProdutorCard from "../../components/ProdutorCard/ProdutorCard";
 
-const incidentes = [
-  { id: 1, name: "ONG A", title: "Ajuda para cães", value: 120.5 },
-  { id: 2, name: "ONG B", title: "Resgate de gatos", value: 250.0 },
-  { id: 3, name: "ONG C", title: "Abrigo para animais", value: 320.75 },
+import Footer from "../../components/footer/Footer";
+
+const produtores = [
+  { id: 1, name: "José", cooperativa: "Cebrapa" },
+  { id: 2, name: "Monica", cooperativa: "Cebrapa" },
+  { id: 3, name: "Ademar", cooperativa: "Cebrapa" },
+  { id: 4, name: "José", cooperativa: "Cebrapa" },
+  { id: 5, name: "Monica", cooperativa: "Cebrapa" },
+  { id: 6, name: "Ademar", cooperativa: "Cebrapa" },
+  { id: 7, name: "José", cooperativa: "Cebrapa" },
+  { id: 8, name: "Monica", cooperativa: "Cebrapa" },
+  { id: 9, name: "Ademar", cooperativa: "Cebrapa" },
 ];
 
 function ListaProdutores() {
-  const navigateToDetail = (incident) => {
-    console.log("Navegando para detalhes:", incident);
+  const navigateToDetail = (produtor) => {
+    console.log("Navegando para detalhes:", produtor);
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">
-        Lista de Incidentes
-      </h1>
-      <div className="space-y-4">
-        {incidentes.map((incident) => (
-          <IncidentCard
-            key={incident.id}
-            incident={incident}
-            navigateToDetail={navigateToDetail}
-          />
-        ))}
+    <>
+      <div className="max-w-3xl mx-auto p-4 mb-10">
+        <h1 className="text-3xl font-bold text-bold-text mb-6 text-center mt-10">
+          Seus produtores
+        </h1>
+        <div className="space-y-4">
+          {produtores.map((produtor) => (
+            <ProdutorCard
+              key={produtor.id}
+              produtor={produtor}
+              navigateToDetail={navigateToDetail}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+      <Footer title="Voltar para a tela inicial" page="/Login" />
+    </>
   );
 }
 

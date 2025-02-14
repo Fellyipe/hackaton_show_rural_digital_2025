@@ -1,27 +1,27 @@
 import React from "react";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "@phosphor-icons/react";
 
-const IncidentCard = ({ incident, navigateToDetail }) => {
+const ProdutorCard = ({ produtor, navigateToDetail }) => {
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md mb-4">
-      <p className="text-sm font-bold text-gray-700">ONG:</p>
-      <p className="text-base text-gray-500 mb-4">{incident.name}</p>
+    <div className="p-6 bg-primary rounded-lg shadow-md mb-4">
+      <div className="flex justify-between">
+        <div>
+          <p className="text-sm font-bold text-white-green">Nome:</p>
+          <p className="text-base text-white-green mb-4">{produtor.name}</p>
+        </div>
 
-      <p className="text-sm font-bold text-gray-700">CASO:</p>
-      <p className="text-base text-gray-500 mb-4">{incident.title}</p>
-
-      <p className="text-sm font-bold text-gray-700">Valor:</p>
-      <p className="text-base text-gray-500 mb-4">
-        {new Intl.NumberFormat("pt-BR", {
-          style: "currency",
-          currency: "BRL",
-        }).format(incident.value)}
-      </p>
+        <div>
+          <p className="text-sm font-bold text-white-green">Cooperativa:</p>
+          <p className="text-base text-white-green mb-4">
+            {produtor.cooperativa}
+          </p>
+        </div>
+      </div>
 
       <button
-        className="flex items-center justify-between text-red-500 font-bold text-base"
-        onClick={() => navigateToDetail(incident)}
+        className="flex items-center justify-between w-full text-emerald font-bold text-base border-t-2 border-emerald"
+        onClick={() => navigateToDetail(produtor)}
       >
         Ver mais detalhes
         <ArrowRight size={16} />
@@ -30,4 +30,4 @@ const IncidentCard = ({ incident, navigateToDetail }) => {
   );
 };
 
-export default IncidentCard;
+export default ProdutorCard;
