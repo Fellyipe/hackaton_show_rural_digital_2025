@@ -167,6 +167,7 @@ def hash_senha(senha):
 
 @app.route('/registrar', methods=['POST'])
 def registrar_usuario():
+    return jsonify({"mensagem": "API funcionando"})
     """Registra um novo usuário como agricultor ou agrônomo."""
     dados = request.json  # Obtém os dados do corpo da requisição
     nome = dados.get("nome")
