@@ -1,14 +1,14 @@
-import Logo from "/public/logo.svg";
+import Logo from "/public/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
 import { useNavigate } from "react-router";
 
 function Login() {
   let navigate = useNavigate();
 
-  function onSubmit(){
+  function onSubmit() {
     //TODO: Implementar a lógica de login
 
-    navigate('/listaProdutores');  
+    navigate("/listaProdutores");
   }
 
   return (

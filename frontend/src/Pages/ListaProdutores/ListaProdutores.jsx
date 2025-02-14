@@ -1,5 +1,6 @@
 import React from "react";
 import ProdutorCard from "../../components/ProdutorCard/ProdutorCard";
+import { useNavigate } from "react-router";
 
 import Footer from "../../components/footer/Footer";
 
@@ -16,8 +17,10 @@ const produtores = [
 ];
 
 function ListaProdutores() {
-  const navigateToDetail = (produtor) => {
-    console.log("Navegando para detalhes:", produtor);
+  let navigate = useNavigate();
+
+  const navigateToDetail = () => {
+    navigate("/telaAgronomo");
   };
 
   return (
