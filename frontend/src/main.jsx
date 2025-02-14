@@ -10,6 +10,7 @@ import Login from "./Pages/Login/Login";
 import ListaProdutores from "./Pages/ListaProdutores/ListaProdutores.jsx";
 import Registro from "./Pages/Registro/Registro.jsx";
 import TelaAgronomo from "./Pages/TelaAgronomo/TelaAgronomo.jsx";
+import AddAnalise from "./Pages/AddAnalise/AddAnalise.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/listaProdutores" element={<ListaProdutores />} />
         <Route path="/telaProdutor" element={<TelaProdutor />} />
         <Route path="/telaAgronomo" element={<TelaAgronomo />} />
+        <Route path="/addAnalise" element={<AddAnalise />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
