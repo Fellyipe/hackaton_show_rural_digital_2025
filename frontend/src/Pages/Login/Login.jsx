@@ -13,10 +13,9 @@ function Login() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-
   async function handleSubmit(event) {
     event.preventDefault();
-    setError(null);
+    setError(null); // Reseta o erro antes da requisição
 
     try {
       const response = await api.get("http://localhost:5000/login", {
@@ -47,10 +46,7 @@ function Login() {
       <div className="mt-10">
         <img src={Logo} alt="logotipo" />
       </div>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-5 w-full md:w-96"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full md:w-96">
         <div>
           <input
             className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
@@ -60,6 +56,7 @@ function Login() {
             value={cpf}
             onChange={(e) => setCpf(e.target.value)}
             autoComplete="off"
+
           />
         </div>
         <div className="flex items-center justify-center bg-white rounded px-2">
