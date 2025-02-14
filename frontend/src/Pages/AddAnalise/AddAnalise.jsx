@@ -36,12 +36,9 @@ function AddAnalise() {
     if (recomendacao) dados.cooperativa_recomendada = recomendacao;
     if (valorPorKg) dados.valor_cooperativa = valorPorKg;
     if (recomendacaoAdicional) dados.sugestao = recomendacaoAdicional;
-
+    dados.analise_id = analiseId;
     try {
-      const response = await api.put(
-        `/atualizar_analise?analise_id=${analiseId}`,
-        dados
-      );
+      const response = await api.put(`/atualizar_analise`, dados);
       alert("Análise atualizada com sucesso!", response);
     } catch (error) {
       console.error("Erro ao atualizar análise:", error);
