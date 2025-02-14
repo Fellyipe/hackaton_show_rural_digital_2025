@@ -131,6 +131,7 @@ def save_analysis(analiseId, averages):
             # Certificando-se de que são strings onde necessário
             param = str(param)
             value = str(value)
+            id = analiseId
             classificacao = str(classificacao)
 
             # Atualiza a análise existente com os novos valores
@@ -144,9 +145,9 @@ def save_analysis(analiseId, averages):
             # Se a análise não existir, insere uma nova
             if cursor.rowcount == 0:
                 cursor.execute(
-                    """INSERT INTO Analises (id, parametro, valor, data, classificacao) 
+                    """INSERT INTO Analises ( parametro, valor, data, classificacao) 
                        VALUES (?, ?, ?, ?, ?)""",
-                    (analiseId, param, value, data_atual, classificacao)
+                    ( param, value, data_atual, classificacao)
                 )
 
         conn.commit()
