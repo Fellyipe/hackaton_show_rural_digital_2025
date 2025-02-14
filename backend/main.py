@@ -132,21 +132,21 @@ def save_analysis(analiseId, averages):
             param = str(param)
             value = str(value)
             classificacao = str(classificacao)
-            id = analiseId
+
             # Atualiza a análise existente com os novos valores
             cursor.execute(
                 """UPDATE Analises 
                    SET parametro = ?, valor = ?, data = ?, classificacao = ? 
-                   WHERE id = """,
-                (param, value, data_atual, classificacao)
+                   WHERE id = ?""",
+                (param, value, data_atual, classificacao, analiseId)
             )
 
             # Se a análise não existir, insere uma nova
             if cursor.rowcount == 0:
                 cursor.execute(
-                    """INSERT INTO Analises ( parametro, valor, data, classificacao) 
+                    """INSERT INTO Analises (id, parametro, valor, data, classificacao) 
                        VALUES (?, ?, ?, ?, ?)""",
-                    ( param, value, data_atual, classificacao)
+                    (analiseId, param, value, data_atual, classificacao)
                 )
 
         conn.commit()
@@ -347,10 +347,10 @@ def registrar_analise():
 
         return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
 
-@app.route('/atualizar_analise/<analise_id>', methods=['PUT'])
+@app.route('/atualizar_analise', methods=['PUT'])
 def atualizar_analise(analise_id):
     """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
-    analise_id = int(analise_id)
+
     dados = request.json
 
     # Conectar ao banco de dados
@@ -458,4 +458,3 @@ def obter_resultados_analise():
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
-
