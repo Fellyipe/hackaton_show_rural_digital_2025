@@ -198,33 +198,36 @@ def registrar_usuario():
             return jsonify({"erro": "CPF ou CREA já cadastrado"}), 400
 
 
-@app.route('/login', methods=['POST'])
-def login_usuario(cpf, senha):
+def login_usuario():
     """Realiza o login e retorna o tipo de usuário (Agricultor ou Agrônomo)."""
-    dados = request.json  # Obtém os dados do corpo da requisição
-    senha = dados.get("senha")
+    dados = request.json  
     cpf = dados.get("cpf")
-    
+    senha = dados.get("senha")
+
+    if not cpf or not senha:
+        return jsonify({"erro": "CPF e senha são obrigatórios"}), 400
+
     senha_hash = hash_senha(senha)
-    
+
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
-        
+
         # Verifica primeiro na tabela Agricultores
         cursor.execute("SELECT id, nome FROM Agricultores WHERE cpf = ? AND senha = ?", (cpf, senha_hash))
         agricultor = cursor.fetchone()
-        
+
         if agricultor:
-            return {"tipo": "agricultor", "id": agricultor[0], "nome": agricultor[1]}
-        
+            return jsonify({"tipo": "agricultor", "id": agricultor[0], "nome": agricultor[1]}), 200
+
         # Se não encontrou, verifica na tabela Agrônomos
         cursor.execute("SELECT id, nome FROM Agronomos WHERE cpf = ? AND senha = ?", (cpf, senha_hash))
         agronomo = cursor.fetchone()
-        
+
         if agronomo:
-            return {"tipo": "agronomo", "id": agronomo[0], "nome": agronomo[1]}
-        
-        return "CPF ou senha incorretos."
+            return jsonify({"tipo": "agronomo", "id": agronomo[0], "nome": agronomo[1]}), 200
+
+        return jsonify({"erro": "CPF ou senha incorretos"}), 400
     
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=5000)
+
