@@ -16,7 +16,7 @@ function AddAnalise() {
   const handleFileUpload = async (file) => {
     try {
       const formData = new FormData();
-      formData.append("pdf", file); // "pdf" deve ser o nome esperado pelo backend
+      formData.append("pdf", file); // "pdf" deve ser o nome calculo_recomandadoesperado pelo backend
       formData.append("analiseId", analiseId);
       const response = await api.post("/upload_pdf", formData, {
         headers: {
@@ -37,8 +37,6 @@ function AddAnalise() {
     if (valorPorKg) dados.valor_cooperativa = valorPorKg;
     if (recomendacaoAdicional) dados.sugestao = recomendacaoAdicional;
     dados.analise_id = analiseId;
-    console.log("Dados a serem enviados:", dados);
-
     try {
       const response = await api.put(`/atualizar_analise`, dados);
       alert("Análise atualizada com sucesso!", response);
