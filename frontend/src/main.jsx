@@ -8,7 +8,7 @@ import App from "./Pages/App.jsx";
 import TelaProdutor from "./Pages/TelaProdutor/TelaProdutor.jsx";
 import Login from "./Pages/Login/Login";
 import ListaProdutores from "./Pages/ListaProdutores/ListaProdutores.jsx";
-import Registro from "./Pages/Registro/Registro.jsx";
+import Cadastro from "./Pages/Cadastro/Cadastro.jsx";
 import TelaAgronomo from "./Pages/TelaAgronomo/TelaAgronomo.jsx";
 import AddAnalise from "./Pages/AddAnalise/AddAnalise.jsx";
 
@@ -18,7 +18,7 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/registro" element={<Registro />} />
+        <Route path="/cadastro" element={<Cadastro />} />
         <Route path="/listaProdutores" element={<ListaProdutores />} />
         <Route path="/telaProdutor" element={<TelaProdutor />} />
         <Route path="/telaAgronomo" element={<TelaAgronomo />} />

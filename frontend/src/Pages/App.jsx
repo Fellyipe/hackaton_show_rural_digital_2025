@@ -13,11 +13,10 @@ function App() {
       <div>
         <img src={logo} alt="logotipo" />
       </div>
-
       <div className="flex flex-col items-center gap-5">
         <button
           onClick={() => navigate("/Login")}
-          className="bg-greenpeace w-52 h-12 rounded-md font-bold text-white text-xl"
+          className="bg-greenpeace hover:bg-emerald w-52 h-12 cursor-pointer rounded-md font-bold text-white text-xl"
         >
           Fazer Login
         </button>

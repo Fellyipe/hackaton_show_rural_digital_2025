@@ -3,9 +3,12 @@ import Logo from "/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
 import api from "../../services/api.js";
 import { useNavigate } from "react-router";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
+
 
 function Registro() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -58,7 +61,10 @@ function Registro() {
       <div className="mt-10">
         <img src={Logo} alt="logotipo" />
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col gap-5 w-full md:w-96"
+      >
         <div>
           <input
             className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
@@ -73,21 +79,31 @@ function Registro() {
             className="appearance-none  mt-5 border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
             id="cpf"
             type="text"
-            placeholder="Cpf"
+            placeholder="CPF"
             value={formData.cpf}
             onChange={handleChange}
+            autoComplete="off"
           />
         </div>
-        <div>
+
+        <div className="flex items-center justify-center bg-white rounded px-2">
           <input
-            className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 mb-3 bg-white focus:outline-none"
+            className="appearance-none border-none rounded w-full py-2 px-1 text-gray-700 bg-white focus:outline-none"
             id="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Senha"
             value={formData.password}
             onChange={handleChange}
           />
+          <button
+            type="button"
+            className="cursor-pointer  flex items-center text-gray-500 hover:text-gray-700"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+          </button>
         </div>
+
         <div className="flex justify-between p-6">
           <div className="flex items-center gap-2">
             <input
@@ -129,7 +145,7 @@ function Registro() {
             className="bg-greenpeace cursor-pointer text-white font-bold py-2 w-full rounded hover:bg-emerald"
             type="submit"
           >
-            Registrar
+            Cadastrar
           </button>
         </div>
       </form>
