@@ -1,22 +1,22 @@
 import { List } from "@phosphor-icons/react";
-
+import Sprout from "../../assets/sprout.png";
 import Footer from "../../components/footer/Footer";
 
 function TelaAgronomo() {
   return (
     <div>
-      <header className="bg-white-green w-full flex flex-col p-4">
-        <button>
-          <List size={42} />
-        </button>
-        <h1 className="text-center text-3xl">Analise de Potassio</h1>
-      </header>
-      <main className="bg-primary w-full h-screen rounded-t-2xl p-4">
-        <div></div>
-        <div>aaa</div>
+      <main className="bg-primary w-full h-screen mt-40 rounded-t-2xl p-4">
+        <div className="flex w-full justify-end items-end">
+          <img className="-mt-32" src={Sprout} alt="sprout" />
+        </div>
+        <div>
+          <span className="text-4xl text-emerald font-bold">
+            Resultado da analise:
+          </span>
+        </div>
       </main>
 
-      <Footer title="Voltar para a tela inicial" page="/" />
+      <Footer title="Voltar para produtores" page="/listaProdutores" />
     </div>
   );
 }
