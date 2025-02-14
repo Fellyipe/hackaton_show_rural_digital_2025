@@ -20,6 +20,7 @@ const handleFileUpload = async (file) => {
     const response = await api.post("/upload_pdf", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+        "Access-Control-Allow-Origin": "*",
       },
     });
 
