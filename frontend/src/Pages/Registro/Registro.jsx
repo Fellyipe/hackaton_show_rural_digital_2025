@@ -32,16 +32,28 @@ function Registro() {
             Entrar
           </button>
         </div>
-        <div>
-          <div>
-            <input type="checkbox" name="" id="" />
+        <div className="flex justify-between p-6">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="produtor"
+              id="produtor"
+              className="appearance-none size-5 border-2 border-gray-500 rounded-md checked:bg-emerald checked:border-transparent"
+            />
+            <span>Sou Produtor</span>
           </div>
-          <div>
-            <input type="checkbox" name="" id="" />
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              name="agronomo"
+              id="agronomo"
+              className="appearance-none size-5 border-2 border-gray-500 rounded-md checked:bg-emerald checked:border-transparent"
+            />
+            <span>Sou Agronomo</span>
           </div>
         </div>
       </form>
-      <Footer title="Não tem uma conta? Cadastre-se" page="/registro" />
+      <Footer title="Voltar para o Login" page="/login" />
     </div>
   );
 }
