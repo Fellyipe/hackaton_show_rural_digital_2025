@@ -2,6 +2,7 @@ import { useState } from "react";
 import Footer from "../../components/footer/Footer.jsx";
 import Ground from "../../assets/ground.png";
 import DragAndDropPDF from "../../components/DragAndDropPDF/DragAndDropPDF.jsx";
+import api from "../../services/api.js";
 
 function AddAnalise() {
   const [file, setFile] = useState(null);
@@ -11,9 +12,19 @@ function AddAnalise() {
   const [valorPorKg, setValorPorKg] = useState(null);
   const [recomendacaoAdicional, setRecomendacaoAdicional] = useState(null);
 
-  function handleFileUpload(file) {
-    console.log("Arquivo recebido:", file);
-  }
+  const handleFileUpload = async (file) => {
+    //console.log("Arquivo recebido:", file);
+    try {
+      const response = await api.post("/upload_pdf", file, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("Resposta do servidor:", response);
+    } catch (e) {
+      alert(e);
+    }
+  };
 
   return (
     <>
@@ -40,7 +51,12 @@ function AddAnalise() {
             <p className="text-xl text-emerald">Calculo sugerido:</p>
             <span className="text-xl font-bold text-white-green">
               0.30 {">"} 0.40 ={" "}
-              <input type="text" placeholder="Kg" className="bg-white text-black px-2 rounded-sm w-14"  onChange={(e)=> setCalculo(e.target.value)}/>
+              <input
+                type="text"
+                placeholder="Kg"
+                className="bg-white text-black px-2 rounded-sm w-14"
+                onChange={(e) => setCalculo(e.target.value)}
+              />
             </span>
           </div>
 
@@ -83,7 +99,11 @@ function AddAnalise() {
         </div>
       </form>
 
-      <Footer title="Voltar para produtores" page="/listaProdutores" backgroundColor="primary" />
+      <Footer
+        title="Voltar para produtores"
+        page="/listaProdutores"
+        backgroundColor="primary"
+      />
     </>
   );
 }
