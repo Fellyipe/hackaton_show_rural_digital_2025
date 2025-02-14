@@ -275,6 +275,7 @@ def produtores():
             "analises": analises_formatadas
         }), 200
 
+@app.route('/produtores', methods=['POST'])
 def registrar_analise():
     """Registra uma nova análise associando um agrônomo a um agricultor pelo CPF."""
     dados = request.json
