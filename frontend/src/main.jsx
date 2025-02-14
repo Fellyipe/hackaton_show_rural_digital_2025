@@ -9,7 +9,7 @@ import TelaProdutor from "./Pages/TelaProdutor/TelaProdutor.jsx";
 import Login from "./Pages/Login/Login";
 import ListaProdutores from "./Pages/ListaProdutores/ListaProdutores.jsx";
 import Registro from "./Pages/Registro/Registro.jsx";
-import TelaAgronomo from "./Pages/telaAgronomo/TelaAgronomo.jsx";
+import TelaAgronomo from "./Pages/TelaAgronomo/TelaAgronomo.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
