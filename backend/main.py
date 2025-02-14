@@ -122,9 +122,15 @@ def save_analysis(analiseId, averages):
         for param, value in averages.items():
             classificacao = classify_value(param, value)
 
-            # Converte valores para string para evitar erro de tipo
+            # Verificando os tipos e valores
+            print(f"Param: {param} ({type(param)})")
+            print(f"Value: {value} ({type(value)})")
+            print(f"Classificacao: {classificacao} ({type(classificacao)})")
+            print(f"AnaliseID: {analiseId} ({type(analiseId)})")
+
+            # Certificando-se de que são strings onde necessário
             param = str(param)
-            value = str(round(value, 3))  # Converte float para string com 3 casas decimais
+            value = str(value)
             classificacao = str(classificacao)
 
             # Atualiza a análise existente com os novos valores
@@ -144,8 +150,6 @@ def save_analysis(analiseId, averages):
                 )
 
         conn.commit()
-
-
 
 def classify_value(parameter, value):
     """
