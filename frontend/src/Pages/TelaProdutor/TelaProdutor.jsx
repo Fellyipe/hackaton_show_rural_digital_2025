@@ -42,9 +42,9 @@ function TelaProdutor() {
       </main>
 
       <Footer
-        backgroundColor="primary"
-        title="Voltar para produtores"
-        page="/listaProdutores"
+        backgroundColor="secondary"
+        title="Voltar para tela inicial"
+        page="/Login"
       />
     </div>
   );
