@@ -138,16 +138,16 @@ def save_analysis(analiseId, averages):
             cursor.execute(
                 """UPDATE Analises 
                    SET parametro = ?, valor = ?, data = ?, classificacao = ? 
-                   WHERE id = analiseId""",
+                   WHERE id = ?""",
                 (param, value, data_atual, classificacao, analiseId)
             )
 
             # Se a análise não existir, insere uma nova
             if cursor.rowcount == 0:
                 cursor.execute(
-                    """INSERT INTO Analises (id, parametro, valor, data, classificacao) 
+                    """INSERT INTO Analises ( parametro, valor, data, classificacao) 
                        VALUES (?, ?, ?, ?, ?)""",
-                    (analiseId, param, value, data_atual, classificacao)
+                    ( param, value, data_atual, classificacao)
                 )
 
         conn.commit()

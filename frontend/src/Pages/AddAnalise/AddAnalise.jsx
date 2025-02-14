@@ -7,16 +7,17 @@ import api from "../../services/api.js";
 function AddAnalise() {
   const [file, setFile] = useState(null);
   const [amostra, setAmostra] = useState(0.38);
-  const [calculo, setCalculo] = useState(null);
-  const [recomendacao, setRecomendacao] = useState(null);
-  const [valorPorKg, setValorPorKg] = useState(null);
-  const [recomendacaoAdicional, setRecomendacaoAdicional] = useState(null);
+  const [calculo, setCalculo] = useState("");
+  const [recomendacao, setRecomendacao] = useState("");
+  const [valorPorKg, setValorPorKg] = useState("");
+  const [recomendacaoAdicional, setRecomendacaoAdicional] = useState("");
+  const analiseId = 1;
 
   const handleFileUpload = async (file) => {
     try {
       const formData = new FormData();
-      formData.append("pdf", file); // "file" deve ser o nome esperado pelo backend
-
+      formData.append("pdf", file); // "pdf" deve ser o nome esperado pelo backend
+      formData.append("analiseId", analiseId);
       const response = await api.post("/upload_pdf", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -26,6 +27,25 @@ function AddAnalise() {
       console.log("Resposta do servidor:", response);
     } catch (e) {
       console.error("Erro no upload:", e);
+    }
+  };
+
+  const handleUpdateAnalise = async () => {
+    const dados = {};
+    if (calculo) dados.calculo_recomendado = calculo;
+    if (recomendacao) dados.cooperativa_recomendada = recomendacao;
+    if (valorPorKg) dados.valor_cooperativa = valorPorKg;
+    if (recomendacaoAdicional) dados.sugestao = recomendacaoAdicional;
+
+    try {
+      const response = await api.put(
+        `/atualizar_analise?analise_id=${analiseId}`,
+        dados
+      );
+      alert("Análise atualizada com sucesso!", response);
+    } catch (error) {
+      console.error("Erro ao atualizar análise:", error);
+      alert("Erro ao atualizar análise. Verifique os dados e tente novamente.");
     }
   };
 
@@ -81,7 +101,7 @@ function AddAnalise() {
             </div>
           </div>
           <div className="flex flex-col gap-5">
-            <p className="text-xl text-emerald">Recomendação adicionais:</p>
+            <p className="text-xl text-emerald">Recomendação adicional:</p>
             <div>
               <textarea
                 className="bg-white rounded-xl w-80"
@@ -94,10 +114,11 @@ function AddAnalise() {
             </div>
           </div>
           <button
-            onClick={() => {}}
+            type="button"
+            onClick={handleUpdateAnalise}
             className="bg-greenpeace cursor-pointer text-white font-bold py-2 w-40 h-12 rounded hover:bg-emerald"
           >
-            Salvar Analise
+            Atualizar Análise
           </button>
         </div>
       </form>
