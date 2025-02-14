@@ -60,8 +60,8 @@ function Registro() {
 
           <input
             className="appearance-none  mt-5 border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
-            id="cpf"
-            type="number"
+            id="CPF"
+            type="text"
             placeholder="Cpf"
             value={formData.cpf}
             onChange={handleChange}
