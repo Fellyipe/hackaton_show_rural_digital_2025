@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import logo from "../../public/logo.svg";
+import logo from "../../public/logo.png";
 
 function App() {
   let navigate = useNavigate();

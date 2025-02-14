@@ -21,7 +21,7 @@ const ProdutorCard = ({ produtor, navigateToDetail }) => {
 
       <button
         className="flex items-center justify-between w-full text-emerald font-bold text-base border-t-2 border-emerald"
-        onClick={() => navigateToDetail(produtor)}
+        onClick={() => navigateToDetail()}
       >
         Ver mais detalhes
         <ArrowRight size={16} />
