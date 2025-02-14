@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 import csv
 import PyPDF2
+import pdfplumber
 from datetime import datetime
 import sqlite3
 from db import init_db
@@ -41,28 +42,26 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def extract_text_from_pdf(file_path):
-    """Extrai o texto de um PDF usando PyPDF2"""
+    """Extrai os dados do PDF usando pdfplumber."""
     extracted_text = []
-    with open(file_path, "rb") as file:
-        reader = PyPDF2.PdfReader(file)
-        for page in reader.pages:
-            text = page.extract_text()
-            if text:
-                extracted_text.append(text)
-    return "\n".join(extracted_text)
+    with pdfplumber.open(file_path) as pdf:
+        for page in pdf.pages:
+            table = page.extract_table()
+            if table:
+                extracted_text.extend(table)  # Adiciona todas as linhas da tabela extraída
+    return extracted_text
 
 def process_pdf(file_path):
-    """Extrai as variáveis e calcula a média"""
-    text = extract_text_from_pdf(file_path)
-
+    """Processa o PDF e calcula a média das variáveis"""
+    extracted_data = extract_text_from_pdf(file_path)
     data = []
-    for line in text.split("\n"):
-        parts = line.split()
-        if len(parts) == 6 and parts[0].startswith("L"):  # Exemplo: L01 0,13 1,1 0,87 1,36 4,95
+
+    for row in extracted_data:
+        if len(row) >= 5 and row[0].startswith("L"):  # Exemplo: L01 0,13 1,1 0,87 1,36 4,95
             try:
-                k = float(parts[1].replace(",", "."))
-                ca = float(parts[2].replace(",", "."))
-                mg = float(parts[3].replace(",", "."))
+                k = float(row[1].replace(",", "."))
+                ca = float(row[2].replace(",", "."))
+                mg = float(row[3].replace(",", "."))
                 data.append({"K": k, "Ca": ca, "Mg": mg})
             except ValueError:
                 continue
