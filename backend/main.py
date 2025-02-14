@@ -6,6 +6,11 @@ from refs import reference_intervals
 import pandas as pd
 import pdfplumber
 from werkzeug.utils import secure_filename
+from graph_utils import *
+
+
+#df = pd.read_csv("dados.csv", delimiter=";", header=0, names=["latitude", "longitude"])
+#compute_centroid(parse_src_file(df))
 
 DATABASE = "banco_de_dados.db"  # Nome do arquivo do banco SQLite
 

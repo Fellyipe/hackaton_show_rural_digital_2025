@@ -116,7 +116,11 @@ function Registro() {
           </button>
         </div>
       </form>
-      <Footer title="Voltar para o Login" page="/login" />
+      <Footer
+        backgroundColor="primary"
+        title="Voltar para o Login"
+        page="/login"
+      />
     </div>
   );
 }

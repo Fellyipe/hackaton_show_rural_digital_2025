@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { Eye,EyeSlash } from "@phosphor-icons/react";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 import Logo from "/public/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
 
@@ -14,7 +14,7 @@ function Login() {
   async function handleSubmit(event) {
     event.preventDefault();
     console.log("Dados enviados:", email, password);
-    // navigate("/listaProdutores");
+    navigate("/listaProdutores");
   }
 
   return (
@@ -60,7 +60,11 @@ function Login() {
           </button>
         </div>
       </form>
-      <Footer title="Não tem uma conta? Cadastre-se" page="/registro" />
+      <Footer
+        backgroundColor="primary"
+        title="Não tem uma conta? Cadastre-se"
+        page="/registro"
+      />
     </div>
   );
 }
