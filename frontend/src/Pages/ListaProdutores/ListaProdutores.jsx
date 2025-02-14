@@ -36,7 +36,7 @@ function ListaProdutores() {
           ))}
         </div>
       </div>
-      <Footer title="Voltar para a tela inicial" page="/Login" />
+      <Footer title="Voltar para a tela inicial" page="/" />
     </>
   );
 }
