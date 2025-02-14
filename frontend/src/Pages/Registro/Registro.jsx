@@ -2,12 +2,14 @@ import { useState } from "react";
 import Logo from "/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
+import api from "../../services/api.js";
 
 function Registro() {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    cpf: "",
     produtor: false,
     agronomo: false,
     cref: "",
@@ -29,11 +31,28 @@ function Registro() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    //TODO Implementar a lógica de registro
+    try {
+      const response = await api.post("/registrar", {
+        nome: formData.email,
+        cpf: formData.cpf,
+        senha: formData.password,
+      });
 
-    console.log("Dados enviados:", formData);
+      const dados = await resposta.json();
+      alert(dados);
+
+      if (response.data.tipo) {
+        alert(`Login bem-sucedido! Tipo: ${response.data.tipo}`);
+        // Redirecionar ou salvar os dados do usuário no estado global
+      } else {
+        alert("CPF ou senha incorretos.");
+      }
+    } catch (error) {
+      console.error("Erro ao fazer login", error);
+      alert("Erro ao tentar logar. Verifique suas credenciais.");
+    }
   };
 
   return (
@@ -54,8 +73,8 @@ function Registro() {
           <input
             className="appearance-none border-none rounded w-full py-2 mt-5 px-3 text-gray-700 bg-white focus:outline-none"
             id="cpf"
-            type="number"
-            placeholder="Cpf"
+            type="text"
+            placeholder="CPF"
             value={formData.cpf}
             onChange={handleChange}
           />
@@ -72,63 +91,21 @@ function Registro() {
           />
           <button
             type="button"
-            className="cursor-pointer  flex items-center text-gray-500 hover:text-gray-700"
+            className="ml-2"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+            {showPassword ? <EyeSlash size={24} /> : <Eye size={24} />}
           </button>
         </div>
 
-        <div className="flex justify-between p-6">
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="produtor"
-              className="appearance-none size-5 border-2 border-gray-500 rounded-md checked:bg-emerald checked:border-transparent"
-              checked={formData.produtor}
-              onChange={handleChange}
-            />
-            <span>Sou Produtor</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              id="agronomo"
-              className="appearance-none size-5 border-2 border-gray-500 rounded-md checked:bg-emerald checked:border-transparent"
-              checked={formData.agronomo}
-              onChange={handleChange}
-            />
-            <span>Sou Agrônomo</span>
-          </div>
-        </div>
-
-        {formData.agronomo && (
-          <div>
-            <input
-              className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
-              id="cref"
-              type="text"
-              placeholder="CREF do Agrônomo"
-              value={formData.cref}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-
-        <div>
-          <button
-            className="bg-greenpeace cursor-pointer text-white font-bold py-2 w-full rounded hover:bg-emerald"
-            type="submit"
-          >
-            Registrar
-          </button>
-        </div>
+        <button
+          type="submit"
+          className="bg-green-500 text-white py-2 px-4 rounded"
+        >
+          Entrar
+        </button>
       </form>
-      <Footer
-        backgroundColor="primary"
-        title="Voltar para o Login"
-        page="/login"
-      />
+      <Footer />
     </div>
   );
 }
