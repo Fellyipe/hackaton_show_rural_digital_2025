@@ -199,7 +199,7 @@ def registrar_usuario():
         except sqlite3.IntegrityError:
             return jsonify({"erro": "CPF ou cref já cadastrado"}), 400
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET'])
 def login_usuario():
     """Realiza o login e retorna o tipo de usuário (Agricultor ou Agrônomo)."""
     cpf = request.args.get("cpf")
