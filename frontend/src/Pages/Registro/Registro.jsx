@@ -2,8 +2,11 @@ import { useState } from "react";
 import Logo from "/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
 import api from "../../services/api.js";
+import { useNavigate } from "react-router";
 
 function Registro() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     email: "",
     cpf: "",
@@ -41,9 +44,9 @@ function Registro() {
         agronomo: formData.agronomo,
         cref: formData.agronomo ? formData.cref : null, // Só envia se for agrônomo
       });
-      console.log(response.data);
 
       alert("Registro bem-sucedido!");
+      navigate("/Login");
     } catch (error) {
       console.error("Erro ao registrar", error);
       alert("Erro ao tentar registrar. Verifique os dados.");
