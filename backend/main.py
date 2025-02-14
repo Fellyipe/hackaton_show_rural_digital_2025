@@ -114,25 +114,27 @@ def upload_pdf():
 # Definindo os intervalos de referência para os parâmetros.
 # Você pode ajustar e adicionar os intervalos para os demais parâmetros.
 
-def save_analysis(cpf, cref, data):
+def save_analysis(cpf, cref, averages):
+    """Salva as médias no banco de dados"""
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         cursor.execute("INSERT OR IGNORE INTO Agricultores (cpf) VALUES (?)", (cpf,))
         cursor.execute("INSERT OR IGNORE INTO Agronomos (cref) VALUES (?)", (cref,))
-        
+
         cursor.execute("SELECT id FROM Agricultores WHERE cpf = ?", (cpf,))
         agricultor_id = cursor.fetchone()[0]
         cursor.execute("SELECT id FROM Agronomos WHERE cref = ?", (cref,))
         agronomo_id = cursor.fetchone()[0]
-        
-        for row in data:
-            for param, value in row.items():
-                if param != 'classification':
-                    classification = classify_value(param, value)
-                    cursor.execute(
-                        "INSERT INTO Analises (agricultor_id, agronomo_id, parametro, valor, classificacao) VALUES (?, ?, ?, ?, ?)",
-                        (agricultor_id, agronomo_id, param, value, classification)
-                    )
+
+        data_atual = datetime.date.today()
+
+        for param, value in averages.items():
+            classificacao = classify_value(param, value)
+            cursor.execute(
+                """INSERT INTO Analises (agricultor_id, agronomo_id, parametro, valor, data, classificacao) 
+                   VALUES (?, ?, ?, ?, ?, ?)""",
+                (agricultor_id, agronomo_id, param, value, data_atual, classificacao),
+            )
         conn.commit()
 
 def classify_value(parameter, value):
