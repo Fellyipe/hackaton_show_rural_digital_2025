@@ -351,9 +351,11 @@ def registrar_analise():
 @app.route('/atualizar_analise', methods=['PUT'])
 def atualizar_analise():
     """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
-
     dados = request.json
     analiseId = dados.get("analiseId")
+    if not analiseId:
+        return jsonify({"erro": "O ID da análise deve ser fornecido."}), 400
+
     # Conectar ao banco de dados
     try:
         with sqlite3.connect(DATABASE) as conn:
@@ -363,7 +365,7 @@ def atualizar_analise():
             cursor.execute("""
                 SELECT calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao 
                 FROM Analises WHERE id = ?
-            """, (analise_id,))
+            """, (analiseId,))
             analise = cursor.fetchone()
 
             if not analise:
@@ -380,7 +382,7 @@ def atualizar_analise():
                 UPDATE Analises 
                 SET calculo_recomendado = ?, cooperativa_recomendada = ?, valor_cooperativa = ?, sugestao = ?
                 WHERE id = ?
-            """, (calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao, analise_id))
+            """, (calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao, analiseId))
 
             conn.commit()
 
