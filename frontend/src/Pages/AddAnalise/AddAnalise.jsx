@@ -20,14 +20,12 @@ const handleFileUpload = async (file) => {
     const response = await api.post("/upload_pdf", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
-        "Access-Control-Allow-Origin": "*",
       },
     });
 
     console.log("Resposta do servidor:", response);
   } catch (e) {
     console.error("Erro no upload:", e);
-    alert(e.response?.data?.message || "Erro ao enviar o arquivo");
   }
 };
 
