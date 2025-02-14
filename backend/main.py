@@ -73,8 +73,11 @@ def save_analysis(cpf, crea, data):
 def classify_value(parameter, value):
     """
     Classifica um valor para um determinado parâmetro com base nos intervalos definidos.
-    Caso o valor seja inválido, retorna None.
+    Caso o valor seja inválido ou não informado, retorna None.
     """
+    if value is None or value == "":
+        return None  # Ignora parâmetros não informados
+
     try:
         # Caso o valor venha como string e use vírgula para decimal, substituímos por ponto.
         if isinstance(value, str):
@@ -88,20 +91,21 @@ def classify_value(parameter, value):
         return None
 
     for interval in intervals:
-        min_val = interval['min']
-        max_val = interval['max']
+        min_val = interval.get('min')
+        max_val = interval.get('max')
+
         # Se não há valor mínimo definido, compara apenas com o máximo.
-        if min_val is None:
-            if val < max_val:
-                return interval['class']
+        if min_val is None and val < max_val:
+            return interval['class']
         # Se não há valor máximo definido, compara apenas com o mínimo.
-        elif max_val is None:
-            if val > min_val:
-                return interval['class']
-        else:
-            if min_val <= val <= max_val:
-                return interval['class']
-    return None
+        elif max_val is None and val > min_val:
+            return interval['class']
+        # Se ambos os valores estão definidos, verifica se o valor está no intervalo.
+        elif min_val is not None and max_val is not None and min_val <= val <= max_val:
+            return interval['class']
+
+    return None  # Se não encontrou nenhuma classificação válida
+
 
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():

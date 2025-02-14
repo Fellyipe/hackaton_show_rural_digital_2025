@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Logo from "/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
+import { Eye, EyeSlash } from "@phosphor-icons/react";
 
 function Registro() {
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -50,16 +52,25 @@ function Registro() {
             onChange={handleChange}
           />
         </div>
-        <div>
+
+        <div className="flex items-center justify-center bg-white rounded px-2">
           <input
-            className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 mb-3 bg-white focus:outline-none"
+            className="appearance-none border-none rounded w-full py-2 px-1 text-gray-700 bg-white focus:outline-none"
             id="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Senha"
             value={formData.password}
             onChange={handleChange}
           />
+          <button
+            type="button"
+            className="cursor-pointer  flex items-center text-gray-500 hover:text-gray-700"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <EyeSlash size={20} /> : <Eye size={20} />}
+          </button>
         </div>
+
         <div className="flex justify-between p-6">
           <div className="flex items-center gap-2">
             <input
