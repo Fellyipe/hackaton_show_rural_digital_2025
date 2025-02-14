@@ -352,6 +352,7 @@ def registrar_analise():
 def atualizar_analise():
     """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
     dados = request.json
+    print("Dados recebidos:", dados)
     analiseId = dados.get("analiseId")
     if not analiseId:
         return jsonify({"erro": "O ID da análise deve ser fornecido."}), 400
