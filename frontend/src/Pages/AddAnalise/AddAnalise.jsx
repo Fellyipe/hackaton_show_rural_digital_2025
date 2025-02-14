@@ -16,8 +16,8 @@ function AddAnalise() {
   }
 
   return (
-    <div>
-      <form className="bg-primary w-full mt-40 rounded-t-2xl p-4">
+    <>
+      <form className="bg-primary w-full mt-40 rounded-t-2xl p-4 py-6 mb-14">
         <div className="flex w-full justify-end items-end">
           <img className="-mt-40 size-48" src={Ground} alt="sprout" />
         </div>
@@ -83,8 +83,8 @@ function AddAnalise() {
         </div>
       </form>
 
-      <Footer title="Voltar para produtores" page="/listaProdutores" />
-    </div>
+      <Footer title="Voltar para produtores" page="/listaProdutores" backgroundColor="primary" />
+    </>
   );
 }
 
