@@ -127,8 +127,8 @@ def upload_pdf():
     pdf_file.seek(0, os.SEEK_END)
     file_size = pdf_file.tell()
     pdf_file.seek(0)
-    if file_size > MAX_FILE_SIZE:
-        return jsonify({'error': 'Arquivo excede 5MB'}), 500
+ #   if file_size > MAX_FILE_SIZE:
+ #       return jsonify({'error': 'Arquivo excede 5MB'}), 500
     
     filename = secure_filename(pdf_file.filename)
     file_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -199,7 +199,7 @@ def registrar_usuario():
         except sqlite3.IntegrityError:
             return jsonify({"erro": "CPF ou cref já cadastrado"}), 400
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET'])
 def login_usuario():
     """Realiza o login e retorna o tipo de usuário (Agricultor ou Agrônomo)."""
     cpf = request.args.get("cpf")
@@ -228,7 +228,52 @@ def login_usuario():
             return jsonify({"tipo": "agronomo", "id": agronomo[0], "nome": agronomo[1]}), 200
 
         return jsonify({"erro": "CPF ou senha incorretos"}), 400
-    
+
+@app.route('/produtores', methods=['GET'])
+def produtores():
+    produtor_id = request.args.get("id")
+
+    if not produtor_id:
+        return jsonify({"erro": "ID do produtor é obrigatório"}), 400
+
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+
+        # Verifica se o ID pertence a um agricultor
+        cursor.execute("SELECT id, nome FROM Agricultores WHERE id = ?", (produtor_id,))
+        agricultor = cursor.fetchone()
+
+        if not agricultor:
+            return jsonify({"erro": "Agricultor não encontrado"}), 404
+
+        # Busca todas as análises associadas ao agricultor
+        cursor.execute("""
+            SELECT id, agronomo_id, parametro, valor, data, classificacao 
+            FROM Analises 
+            WHERE agricultor_id = ?
+        """, (produtor_id,))
+        
+        analises = cursor.fetchall()
+
+        # Formata os resultados
+        analises_formatadas = [
+            {
+                "id": row[0],
+                "agronomo_id": row[1],
+                "parametro": row[2],
+                "valor": row[3],
+                "data": row[4],
+                "classificacao": row[5],
+            }
+            for row in analises
+        ]
+
+        return jsonify({
+            "id": agricultor[0],
+            "nome": agricultor[1],
+            "analises": analises_formatadas
+        }), 200
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
 

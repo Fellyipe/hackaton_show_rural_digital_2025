@@ -12,19 +12,26 @@ function AddAnalise() {
   const [valorPorKg, setValorPorKg] = useState(null);
   const [recomendacaoAdicional, setRecomendacaoAdicional] = useState(null);
 
-  const handleFileUpload = async (file) => {
-    //console.log("Arquivo recebido:", file);
-    try {
-      const response = await api.post("/upload_pdf", file, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("Resposta do servidor:", response);
-    } catch (e) {
-      alert(e);
-    }
-  };
+const handleFileUpload = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file); // "file" deve ser o nome esperado pelo backend
+
+    const response = await api.post("/upload_pdf", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Access-Control-Allow-Origin": "*",
+      },
+    });
+
+    console.log("Resposta do servidor:", response);
+  } catch (e) {
+    console.error("Erro no upload:", e);
+    alert(e.response?.data?.message || "Erro ao enviar o arquivo");
+  }
+};
+
+
 
   return (
     <>
