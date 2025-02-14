@@ -8,7 +8,7 @@ const ProdutorCard = ({ produtor, navigateToDetail }) => {
       <div className="flex justify-between">
         <div>
           <p className="text-sm font-bold text-white-green">Nome:</p>
-          <p className="text-base text-white-green mb-4">{produtor.name}</p>
+          <p className="text-base text-white-green mb-4">{produtor.nome}</p>
         </div>
 
         <div>
@@ -23,7 +23,7 @@ const ProdutorCard = ({ produtor, navigateToDetail }) => {
         className="flex items-center justify-between w-full text-emerald font-bold text-base border-t-2 border-emerald"
         onClick={() => navigateToDetail()}
       >
-        Ver mais detalhes
+        Ver ultima analise
         <ArrowRight size={16} />
       </button>
     </div>
