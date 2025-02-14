@@ -1,15 +1,13 @@
 import { useState } from "react";
 import Logo from "/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
-import { Eye, EyeSlash } from "@phosphor-icons/react";
 import api from "../../services/api.js";
 
 function Registro() {
-  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
     cpf: "",
+    password: "",
     produtor: false,
     agronomo: false,
     cref: "",
@@ -33,20 +31,11 @@ function Registro() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await api.post("/registrar", {
-        nome: formData.email,
-        cpf: formData.cpf,
-        senha: formData.password,
-        crea: formData.agronomo ? formData.cref : null,
-      });
+    console.log(formData);
 
-      if (response.data.tipo) {
-        alert(`Login bem-sucedido! Tipo: ${response.data.tipo}`);
-        // Redirecionar ou salvar os dados do usuário no estado global
-      } else {
-        alert("CPF ou senha incorretos.");
-      }
+    try {
+      const response = await api.post("/registrar", {});
+      alert(response);
     } catch (error) {
       console.error("Erro ao fazer login", error);
       alert("Erro ao tentar logar. Verifique suas credenciais.");
@@ -68,42 +57,76 @@ function Registro() {
             value={formData.email}
             onChange={handleChange}
           />
+
           <input
-            className="appearance-none border-none rounded w-full py-2 mt-5 px-3 text-gray-700 bg-white focus:outline-none"
+            className="appearance-none  mt-5 border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
             id="cpf"
-            type="text"
-            placeholder="CPF"
+            type="number"
+            placeholder="Cpf"
             value={formData.cpf}
             onChange={handleChange}
           />
         </div>
-
-        <div className="flex items-center justify-center bg-white rounded px-2">
+        <div>
           <input
-            className="appearance-none border-none rounded w-full py-2 px-1 text-gray-700 bg-white focus:outline-none"
+            className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 mb-3 bg-white focus:outline-none"
             id="password"
-            type={showPassword ? "text" : "password"}
+            type="password"
             placeholder="Senha"
             value={formData.password}
             onChange={handleChange}
           />
-          <button
-            type="button"
-            className="ml-2"
-            onClick={() => setShowPassword(!showPassword)}
-          >
-            {showPassword ? <EyeSlash size={24} /> : <Eye size={24} />}
-          </button>
+        </div>
+        <div className="flex justify-between p-6">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="produtor"
+              className="appearance-none size-5 border-2 border-gray-500 rounded-md checked:bg-emerald checked:border-transparent"
+              checked={formData.produtor}
+              onChange={handleChange}
+            />
+            <span>Sou Produtor</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="agronomo"
+              className="appearance-none size-5 border-2 border-gray-500 rounded-md checked:bg-emerald checked:border-transparent"
+              checked={formData.agronomo}
+              onChange={handleChange}
+            />
+            <span>Sou Agrônomo</span>
+          </div>
         </div>
 
-        <button
-          type="submit"
-          className="bg-green-500 text-white py-2 px-4 rounded"
-        >
-          Entrar
-        </button>
+        {formData.agronomo && (
+          <div>
+            <input
+              className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
+              id="cref"
+              type="text"
+              placeholder="CREF do Agrônomo"
+              value={formData.cref}
+              onChange={handleChange}
+            />
+          </div>
+        )}
+
+        <div>
+          <button
+            className="bg-greenpeace cursor-pointer text-white font-bold py-2 w-full rounded hover:bg-emerald"
+            type="submit"
+          >
+            Registrar
+          </button>
+        </div>
       </form>
-      <Footer />
+      <Footer
+        backgroundColor="primary"
+        title="Voltar para o Login"
+        page="/login"
+      />
     </div>
   );
 }
