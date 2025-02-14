@@ -347,10 +347,10 @@ def registrar_analise():
 
         return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
 
-@app.route('/atualizar_analise/<int:analise_id>', methods=['PUT'])
+@app.route('/atualizar_analise/<analise_id>', methods=['PUT'])
 def atualizar_analise(analise_id):
     """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
-
+    analise_id = int(analise_id)
     dados = request.json
 
     # Conectar ao banco de dados
