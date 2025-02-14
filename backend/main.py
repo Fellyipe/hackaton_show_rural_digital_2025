@@ -51,41 +51,65 @@ def extract_text_from_pdf(file_path):
                 extracted_text.append(text)
     return "\n".join(extracted_text)
 
+def process_pdf(file_path):
+    """Extrai as variáveis e calcula a média"""
+    text = extract_text_from_pdf(file_path)
+
+    data = []
+    for line in text.split("\n"):
+        parts = line.split()
+        if len(parts) == 6 and parts[0].startswith("L"):  # Exemplo: L01 0,13 1,1 0,87 1,36 4,95
+            try:
+                k = float(parts[1].replace(",", "."))
+                ca = float(parts[2].replace(",", "."))
+                mg = float(parts[3].replace(",", "."))
+                data.append({"K": k, "Ca": ca, "Mg": mg})
+            except ValueError:
+                continue
+
+    if not data:
+        return None
+
+    avg_k = sum(d["K"] for d in data) / len(data)
+    avg_ca = sum(d["Ca"] for d in data) / len(data)
+    avg_mg = sum(d["Mg"] for d in data) / len(data)
+
+    return {"K": avg_k, "Ca": avg_ca, "Mg": avg_mg}
+
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
-    """Recebe um PDF, extrai o texto e salva como CSV"""
-    if 'pdf' not in request.files:
-        return jsonify({'error': 'Nenhum arquivo enviado!'}), 400
+    """Recebe um PDF, extrai os dados e insere no banco"""
+    if "pdf" not in request.files:
+        return jsonify({"error": "Nenhum arquivo enviado!"}), 400
 
-    pdf_file = request.files['pdf']
+    pdf_file = request.files["pdf"]
 
-    if pdf_file.filename == '':
-        return jsonify({'error': 'Nome do arquivo vazio!'}), 400
+    if pdf_file.filename == "":
+        return jsonify({"error": "Nome do arquivo vazio!"}), 400
 
     if not allowed_file(pdf_file.filename):
-        return jsonify({'error': 'Arquivo inválido. Apenas PDFs são permitidos.'}), 400
+        return jsonify({"error": "Arquivo inválido. Apenas PDFs são permitidos."}), 400
 
     filename = secure_filename(pdf_file.filename)
     temp_pdf_path = os.path.join(UPLOAD_FOLDER, filename)
     pdf_file.save(temp_pdf_path)
 
-    extracted_text = extract_text_from_pdf(temp_pdf_path)
+    averages = process_pdf(temp_pdf_path)
     
-    if not extracted_text:
+    if not averages:
         os.remove(temp_pdf_path)
-        return jsonify({'error': 'Nenhum texto encontrado no PDF'}), 400
+        return jsonify({"error": "Nenhum dado válido encontrado no PDF"}), 400
 
-    csv_filename = f"{os.path.splitext(filename)[0]}.csv"
-    csv_path = os.path.join(CSV_FOLDER, csv_filename)
+    cpf = request.form.get("cpf")
+    cref = request.form.get("cref")
+    
+    if not cpf or not cref:
+        return jsonify({"error": "CPF e CREF são obrigatórios!"}), 400
 
-    with open(csv_path, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.writer(file)
-        for line in extracted_text.split("\n"):
-            writer.writerow([line])
-
+    save_analysis(cpf, cref, averages)
     os.remove(temp_pdf_path)
 
-    return jsonify({'message': 'PDF processado com sucesso!', 'csv_file': csv_path}), 200
+    return jsonify({"message": "PDF processado com sucesso!", "data": averages}), 200
 
 # Definindo os intervalos de referência para os parâmetros.
 # Você pode ajustar e adicionar os intervalos para os demais parâmetros.
