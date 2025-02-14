@@ -30,7 +30,7 @@ function Registro() {
   const handleSubmit = (e) => {
     e.preventDefault();
     //TODO Implementar a lógica de registro
-    
+
     console.log("Dados enviados:", formData);
   };
 
@@ -105,7 +105,11 @@ function Registro() {
           </button>
         </div>
       </form>
-      <Footer title="Voltar para o Login" page="/login" />
+      <Footer
+        backgroundColor="primary"
+        title="Voltar para o Login"
+        page="/login"
+      />
     </div>
   );
 }

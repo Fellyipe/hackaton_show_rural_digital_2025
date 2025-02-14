@@ -47,7 +47,11 @@ function TelaAgronomo() {
         </div>
       </main>
 
-      <Footer title="Voltar para produtores" page="/listaProdutores" />
+      <Footer
+        backgroundColor="primary"
+        title="Voltar para produtores"
+        page="/listaProdutores"
+      />
     </div>
   );
 }

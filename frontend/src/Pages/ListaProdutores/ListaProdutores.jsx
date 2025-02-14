@@ -39,7 +39,11 @@ function ListaProdutores() {
           ))}
         </div>
       </div>
-      <Footer title="Voltar para a tela inicial" page="/" />
+      <Footer
+        backgroundColor="primary"
+        title="Voltar para a tela inicial"
+        page="/"
+      />
     </>
   );
 }
