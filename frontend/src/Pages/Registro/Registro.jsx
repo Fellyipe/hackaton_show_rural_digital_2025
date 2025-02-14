@@ -51,6 +51,14 @@ function Registro() {
             value={formData.email}
             onChange={handleChange}
           />
+          <input
+            className="appearance-none border-none rounded w-full py-2 mt-5 px-3 text-gray-700 bg-white focus:outline-none"
+            id="cpf"
+            type="number"
+            placeholder="Cpf"
+            value={formData.cpf}
+            onChange={handleChange}
+          />
         </div>
 
         <div className="flex items-center justify-center bg-white rounded px-2">
