@@ -1,7 +1,11 @@
 import Sprout from "../../assets/sprout.png";
 import Footer from "../../components/footer/Footer";
 
+import { useNavigate } from "react-router";
+
 function TelaAgronomo() {
+  let navigate = useNavigate();
+
   return (
     <div>
       <main className="bg-primary w-full h-screen mt-40 rounded-t-2xl p-4">
@@ -39,7 +43,7 @@ function TelaAgronomo() {
             </span>
           </div>
           <button
-            onClick={() => {}}
+            onClick={() => navigate("/AddAnalise")}
             className="bg-secondary cursor-pointer text-white font-bold py-2 w-40 h-12 rounded hover:bg-emerald"
           >
             Nova Analise
