@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import sqlite3
 from db import init_db
@@ -16,6 +17,7 @@ from graph_utils import *
 DATABASE = "banco_de_dados.db"  # Nome do arquivo do banco SQLite
 
 app = Flask(__name__)
+CORS(app)
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf'}
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
@@ -167,7 +169,6 @@ def hash_senha(senha):
 
 @app.route('/registrar', methods=['POST'])
 def registrar_usuario():
-    return jsonify({"mensagem": "API funcionando"})
     """Registra um novo usuário como agricultor ou agrônomo."""
     dados = request.json  # Obtém os dados do corpo da requisição
     nome = dados.get("nome")
