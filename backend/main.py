@@ -117,7 +117,7 @@ def save_analysis(analiseId, averages):
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
 
-        data_atual = datetime.date.today()
+        data_atual = datetime.today().date()
 
         for param, value in averages.items():
             classificacao = classify_value(param, value)
