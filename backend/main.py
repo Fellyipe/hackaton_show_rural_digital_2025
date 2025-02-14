@@ -85,6 +85,8 @@ def upload_pdf():
 
     os.remove(temp_pdf_path)
 
+    process_csv(csv_path)
+
     return jsonify({'message': 'PDF processado com sucesso!', 'csv_file': csv_path}), 200
 
 # Definindo os intervalos de referência para os parâmetros.
@@ -146,6 +148,32 @@ def classify_value(parameter, value):
             return interval['class']
 
     return None  # Se não encontrou nenhuma classificação válida
+
+def process_csv(csv_path):
+    """Processa o CSV gerado do PDF, segmenta os dados por parâmetros e aplica classify_value."""
+    
+    df = pd.read_csv(csv_path)
+
+    # Suponha que a segmentação seja feita com base em uma coluna chamada 'Parametro'
+    parametro_col = 'Parametro'  # Ajuste para a coluna correta
+    valor_col = 'Valor'  # Ajuste para a coluna de valores
+
+    if parametro_col not in df.columns or valor_col not in df.columns:
+        raise ValueError(f"Colunas esperadas '{parametro_col}' e '{valor_col}' não encontradas no CSV!")
+
+    # Itera sobre os diferentes parâmetros e valores
+    resultados = {}
+    for parametro, sub_df in df.groupby(parametro_col):
+        sub_df['Classificacao'] = sub_df[valor_col].apply(classify_value)  # Aplica a classificação
+        resultados[parametro] = sub_df
+
+    # Salva cada conjunto de dados classificado em arquivos separados
+    for parametro, data in resultados.items():
+        output_path = f"{os.path.splitext(csv_path)[0]}_{parametro}.csv"
+        data.to_csv(output_path, index=False)
+        print(f"Arquivo salvo: {output_path}")
+
+    return resultados  # Retorna um dicionário com os DataFrames segmentados
 
 @app.route('/analises', methods=['GET'])
 def get_analises():
@@ -307,39 +335,120 @@ def registrar_analise():
 
         return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
 
-@app.route('/atualizar_analise/', methods=['PUT'])
+from flask import Flask, request, jsonify
+import sqlite3
+
+app = Flask(__name__)
+DATABASE = "banco_de_dados.db"
+
+@app.route('/atualizar_analise', methods=['PUT'])
 def atualizar_analise(analise_id):
-    """Atualiza os dados de uma análise existente com base em novos cálculos"""
+    """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
+
     dados = request.json
 
-    parametro = dados.get("parametro")
-    valor = dados.get("valor")
-    classificacao = dados.get("classificacao")
+    # Conectar ao banco de dados
+    try:
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
 
-    if not (parametro and valor and classificacao):
-        return jsonify({"erro": "Todos os campos são obrigatórios"}), 400
+            # Verifica se a análise existe e obtém os valores atuais
+            cursor.execute("""
+                SELECT calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao 
+                FROM Analises WHERE id = ?
+            """, (analise_id,))
+            analise = cursor.fetchone()
 
-    with sqlite3.connect(DATABASE) as conn:
-        cursor = conn.cursor()
+            if not analise:
+                return jsonify({"erro": "Análise não encontrada"}), 404
 
-        # Verifica se a análise existe
-        cursor.execute("SELECT id FROM Analises WHERE id = ?", (analise_id,))
-        analise = cursor.fetchone()
+            # Mantém os valores atuais caso não sejam enviados
+            calculo_recomendado = dados.get("calculo_recomendado", analise[0])
+            cooperativa_recomendada = dados.get("cooperativa_recomendada", analise[1])
+            valor_cooperativa = dados.get("valor_cooperativa", analise[2])
+            sugestao = dados.get("sugestao", analise[3])
 
-        if not analise:
-            return jsonify({"erro": "Análise não encontrada"}), 404
+            # Atualiza apenas os campos necessários
+            cursor.execute("""
+                UPDATE Analises 
+                SET calculo_recomendado = ?, cooperativa_recomendada = ?, valor_cooperativa = ?, sugestao = ?
+                WHERE id = ?
+            """, (calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao, analise_id))
 
-        # Atualiza os dados da análise
-        cursor.execute("""
-            UPDATE Analises 
-            SET parametro = ?, valor = ?, classificacao = ?
-            WHERE id = ?
-        """, (parametro, valor, classificacao, analise_id))
+            conn.commit()
 
-        conn.commit()
+        return jsonify({"mensagem": "Análise atualizada com sucesso!"}), 200
 
-    return jsonify({"mensagem": "Análise atualizada com sucesso!"}), 200
+    except sqlite3.Error as e:
+        return jsonify({"erro": f"Erro no banco de dados: {str(e)}"}), 500
 
+@app.route('/resultados_analise', methods=['GET'])
+def obter_resultados_analise():
+    """Retorna todas as análises registradas para um determinado parâmetro indexado."""
+    
+    parametro_index = request.args.get("parametro_index", type=int)
+
+    if parametro_index is None:
+        return jsonify({"erro": "É necessário fornecer o índice do parâmetro."}), 400
+
+    try:
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+
+            # Obtém todas as análises para o parâmetro indexado
+            cursor.execute("""
+                SELECT id, agricultor_id, agronomo_id, parametro, valor, classificacao
+                FROM Analises
+                ORDER BY parametro
+            """)
+            todas_analises = cursor.fetchall()
+
+            if not todas_analises:
+                return jsonify({"erro": "Nenhuma análise encontrada."}), 404
+
+            # Criar um dicionário agrupado por parâmetro
+            analises_por_parametro = {}
+            for analise in todas_analises:
+                param = analise[3]  # Coluna 'parametro'
+                if param not in analises_por_parametro:
+                    analises_por_parametro[param] = []
+                analises_por_parametro[param].append({
+                    "id": analise[0],
+                    "agricultor_id": analise[1],
+                    "agronomo_id": analise[2],
+                    "valor": analise[4],
+                    "classificacao": analise[5]
+                })
+
+            # Obtém o nome do parâmetro correspondente ao índice solicitado
+            parametros_disponiveis = list(analises_por_parametro.keys())
+
+            if parametro_index < 0 or parametro_index >= len(parametros_disponiveis):
+                return jsonify({"erro": "Índice de parâmetro inválido."}), 400
+
+            parametro_escolhido = parametros_disponiveis[parametro_index]
+            analises_filtradas = analises_por_parametro[parametro_escolhido]
+
+            # Calcular a porcentagem de classificação
+            total_analises = len(analises_filtradas)
+            classificacao_contagem = {}
+
+            for analise in analises_filtradas:
+                classificacao = analise["classificacao"]
+                classificacao_contagem[classificacao] = classificacao_contagem.get(classificacao, 0) + 1
+
+            for analise in analises_filtradas:
+                analise["percentual_classificacao"] = round(
+                    (classificacao_contagem[analise["classificacao"]] / total_analises) * 100, 2
+                )
+
+            return jsonify({
+                "parametro": parametro_escolhido,
+                "analises": analises_filtradas
+            }), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"erro": f"Erro no banco de dados: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
