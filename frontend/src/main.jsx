@@ -15,10 +15,10 @@ createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/telaProdutor" element={<TelaProdutor />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/listaProdutores" element={<ListaProdutores />} />
+        <Route path="/telaProdutor" element={<TelaProdutor />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

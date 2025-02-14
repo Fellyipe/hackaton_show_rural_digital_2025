@@ -1,8 +1,8 @@
-import Logo from '/logo.svg';
-import Footer from '../../components/footer/Footer.jsx';
-import { useNavigate } from 'react-router';
+import Logo from "/public/logo.svg";
+import Footer from "../../components/footer/Footer.jsx";
+import { useNavigate } from "react-router";
 
-function Login(){
+function Login() {
   let navigate = useNavigate();
 
   function onSubmit(){
@@ -13,7 +13,7 @@ function Login(){
 
   return (
     <div className="flex flex-col items-center h-screen gap-5 p-8 bg-white-green">
-      <div className='mt-10'>
+      <div className="mt-10">
         <img src={Logo} alt="logotipo" />
       </div>
       <form onSubmit={onSubmit} className="flex flex-col gap-5 w-full">
