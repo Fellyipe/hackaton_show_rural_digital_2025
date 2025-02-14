@@ -57,15 +57,15 @@ def extract_tables_from_pdf(file_path):
 # Definindo os intervalos de referência para os parâmetros.
 # Você pode ajustar e adicionar os intervalos para os demais parâmetros.
 
-def save_analysis(cpf, crea, data):
+def save_analysis(cpf, cref, data):
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         cursor.execute("INSERT OR IGNORE INTO Agricultores (cpf) VALUES (?)", (cpf,))
-        cursor.execute("INSERT OR IGNORE INTO Agronomos (crea) VALUES (?)", (crea,))
+        cursor.execute("INSERT OR IGNORE INTO Agronomos (cref) VALUES (?)", (cref,))
         
         cursor.execute("SELECT id FROM Agricultores WHERE cpf = ?", (cpf,))
         agricultor_id = cursor.fetchone()[0]
-        cursor.execute("SELECT id FROM Agronomos WHERE crea = ?", (crea,))
+        cursor.execute("SELECT id FROM Agronomos WHERE cref = ?", (cref,))
         agronomo_id = cursor.fetchone()[0]
         
         for row in data:
@@ -144,23 +144,23 @@ def upload_pdf():
                     extracted_data.append(dict(zip(header, row)))
     
     cpf = request.form.get('cpf')
-    crea = request.form.get('crea')
-    if not cpf or not crea:
-        return jsonify({'error': 'CPF e CREA são obrigatórios'}), 400
+    cref = request.form.get('cref')
+    if not cpf or not cref:
+        return jsonify({'error': 'CPF e cref são obrigatórios'}), 400
     
-    save_analysis(cpf, crea, extracted_data)
+    save_analysis(cpf, cref, extracted_data)
     return jsonify({'message': 'PDF processado e salvo com sucesso!'})
 
 @app.route('/analises', methods=['GET'])
 def get_analises():
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT A.cpf, AG.crea, AN.parametro, AN.valor, AN.classificacao FROM Analises AN "+
+        cursor.execute("SELECT A.cpf, AG.cref, AN.parametro, AN.valor, AN.classificacao FROM Analises AN "+
                         "JOIN Agricultores A ON AN.agricultor_id = A.id "+
                         "JOIN Agronomos AG ON AN.agronomo_id = AG.id")
         results = cursor.fetchall()
     
-    return jsonify([{'cpf': row[0], 'crea': row[1], 'parametro': row[2], 'valor': row[3], 'classificacao': row[4]} for row in results])
+    return jsonify([{'cpf': row[0], 'cref': row[1], 'parametro': row[2], 'valor': row[3], 'classificacao': row[4]} for row in results])
 
 
 def hash_senha(senha):
@@ -174,7 +174,7 @@ def registrar_usuario():
     nome = dados.get("nome")
     senha = dados.get("senha")
     cpf = dados.get("cpf")
-    cref = dados.get("crea")  # Opcional, pode ser None
+    cref = dados.get("cref")  # Opcional, pode ser None
 
     if not nome or not senha or not cpf:
         return jsonify({"erro": "Nome, senha e CPF são obrigatórios"}), 400
@@ -184,10 +184,10 @@ def registrar_usuario():
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         try:
-            if crea:
+            if cref:
                 cursor.execute(
-                    "INSERT INTO Agronomos (nome, senha, cpf, crea) VALUES (?, ?, ?, ?)", 
-                    (nome, senha_hash, cpf, crea)
+                    "INSERT INTO Agronomos (nome, senha, cpf, cref) VALUES (?, ?, ?, ?)", 
+                    (nome, senha_hash, cpf, cref)
                 )
                 return jsonify({"mensagem": "Agrônomo registrado com sucesso!"}), 201
             else:
@@ -197,7 +197,7 @@ def registrar_usuario():
                 )
                 return jsonify({"mensagem": "Agricultor registrado com sucesso!"}), 201
         except sqlite3.IntegrityError:
-            return jsonify({"erro": "CPF ou CREA já cadastrado"}), 400
+            return jsonify({"erro": "CPF ou cref já cadastrado"}), 400
 
 
 def login_usuario():

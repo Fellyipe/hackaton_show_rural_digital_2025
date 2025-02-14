@@ -31,14 +31,22 @@ function Registro() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
 
     try {
-      const response = await api.post("/registrar", {});
-      alert(response);
+      const response = await api.post("/registrar", {
+        nome: formData.email,
+        senha: formData.password, // Corrigido
+        cpf: formData.cpf,
+        produtor: formData.produtor,
+        agronomo: formData.agronomo,
+        cref: formData.agronomo ? formData.cref : null, // Só envia se for agrônomo
+      });
+      console.log(response.data);
+
+      alert("Registro bem-sucedido!");
     } catch (error) {
-      console.error("Erro ao fazer login", error);
-      alert("Erro ao tentar logar. Verifique suas credenciais.");
+      console.error("Erro ao registrar", error);
+      alert("Erro ao tentar registrar. Verifique os dados.");
     }
   };
 
@@ -60,7 +68,7 @@ function Registro() {
 
           <input
             className="appearance-none  mt-5 border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
-            id="CPF"
+            id="cpf"
             type="text"
             placeholder="Cpf"
             value={formData.cpf}
