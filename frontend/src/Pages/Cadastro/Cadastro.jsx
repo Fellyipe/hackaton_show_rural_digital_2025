@@ -5,11 +5,19 @@ import api from "../../services/api.js";
 import { useNavigate } from "react-router";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 
-
 function Registro() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(null);
 
+  function validateCPF(cpf) {
+    cpf = cpf.replace(/\D/g, "");
+    return cpf.length === 11;
+  }
+  function validatePassword(password) {
+    return password.length >= 8;
+  }
+  
   const [formData, setFormData] = useState({
     email: "",
     cpf: "",
@@ -37,6 +45,19 @@ function Registro() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    if(!formData.email || !formData.cpf || !formData.password || (!formData.produtor && !formData.agronomo)) {
+      setError("Preencha todos os campos");
+      return;
+    }
+    if (!validateCPF(formData.cpf)) {
+      setError("CPF inválido");
+      return;
+    }
+    if (!validatePassword(formData.password)) {
+      setError("Senha deve ter no mínimo 8 caracteres");
+      return;
+    }
 
     try {
       const response = await api.post("/registrar", {
@@ -52,7 +73,7 @@ function Registro() {
       navigate("/Login");
     } catch (error) {
       console.error("Erro ao registrar", error);
-      alert("Erro ao tentar registrar. Verifique os dados.");
+      setError(error.response?.data?.erro || "Erro ao realizar login");
     }
   };
 
@@ -144,10 +165,11 @@ function Registro() {
           <button
             className="bg-greenpeace cursor-pointer text-white font-bold py-2 w-full rounded hover:bg-emerald"
             type="submit"
-          >
+            >
             Cadastrar
           </button>
         </div>
+            {error && <p className="text-red-500">{error}</p>}
       </form>
       <Footer
         backgroundColor="primary"
