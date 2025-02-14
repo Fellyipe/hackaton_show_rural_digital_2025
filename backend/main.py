@@ -307,6 +307,40 @@ def registrar_analise():
 
         return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
 
+@app.route('/atualizar_analise/', methods=['PUT'])
+def atualizar_analise(analise_id):
+    """Atualiza os dados de uma análise existente com base em novos cálculos"""
+    dados = request.json
+
+    parametro = dados.get("parametro")
+    valor = dados.get("valor")
+    classificacao = dados.get("classificacao")
+
+    if not (parametro and valor and classificacao):
+        return jsonify({"erro": "Todos os campos são obrigatórios"}), 400
+
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+
+        # Verifica se a análise existe
+        cursor.execute("SELECT id FROM Analises WHERE id = ?", (analise_id,))
+        analise = cursor.fetchone()
+
+        if not analise:
+            return jsonify({"erro": "Análise não encontrada"}), 404
+
+        # Atualiza os dados da análise
+        cursor.execute("""
+            UPDATE Analises 
+            SET parametro = ?, valor = ?, classificacao = ?
+            WHERE id = ?
+        """, (parametro, valor, classificacao, analise_id))
+
+        conn.commit()
+
+    return jsonify({"mensagem": "Análise atualizada com sucesso!"}), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
 
