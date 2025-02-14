@@ -1,13 +1,22 @@
 import Logo from '/logo.svg';
 import Footer from '../../components/footer/Footer.jsx';
+import { useNavigate } from 'react-router';
 
 function Login(){
+  let navigate = useNavigate();
+
+  function onSubmit(){
+    //TODO: Implementar a lógica de login
+    
+    navigate('/listaProdutores');  
+  }
+
   return (
     <div className="flex flex-col items-center h-screen gap-5 p-8 bg-white-green">
       <div className='mt-10'>
         <img src={Logo} alt="logotipo" />
       </div>
-      <form className="flex flex-col gap-5 w-full">
+      <form onSubmit={onSubmit} className="flex flex-col gap-5 w-full">
         <div>
           <input
             className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
