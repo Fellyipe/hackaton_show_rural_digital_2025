@@ -7,7 +7,7 @@ function Login(){
 
   function onSubmit(){
     //TODO: Implementar a lógica de login
-    
+
     navigate('/listaProdutores');  
   }
 
@@ -42,7 +42,7 @@ function Login(){
           </button>
         </div>
       </form>
-      <Footer title="Não tem uma conta? Cadastre-se" page="/cadastro" />
+      <Footer title="Não tem uma conta? Cadastre-se" page="/registro" />
     </div>
   );
 }
