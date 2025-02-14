@@ -117,8 +117,8 @@ def classify_value(parameter, value):
 
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
-    if 'pdf' not in request.files:
-        return jsonify({'error': 'Nenhum arquivo enviado com o nome "pdf"'}), 400
+ #   if 'pdf' not in request.files:
+  #      return jsonify({'error': 'Nenhum arquivo enviado com o nome "pdf"'}), 400
     
     pdf_file = request.files['pdf']
     if pdf_file.filename == '' or not allowed_file(pdf_file.filename):
@@ -199,12 +199,11 @@ def registrar_usuario():
         except sqlite3.IntegrityError:
             return jsonify({"erro": "CPF ou cref já cadastrado"}), 400
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
 def login_usuario():
     """Realiza o login e retorna o tipo de usuário (Agricultor ou Agrônomo)."""
-    dados = request.json  
-    cpf = dados.get("cpf")
-    senha = dados.get("senha")
+    cpf = request.args.get("cpf")
+    senha = request.args.get("senha")
 
     if not cpf or not senha:
         return jsonify({"erro": "CPF e senha são obrigatórios"}), 400
