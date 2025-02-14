@@ -165,7 +165,7 @@ def hash_senha(senha):
     """Criptografa a senha usando SHA-256."""
     return hashlib.sha256(senha.encode()).hexdigest()
 
-@app.route('/registrar', methods=['GET'])
+@app.route('/registrar', methods=['POST'])
 def registrar_usuario(nome, senha, cpf, crea=None):
     """Registra um novo usuário como agricultor ou agrônomo."""
     senha_hash = hash_senha(senha)
@@ -186,7 +186,7 @@ def registrar_usuario(nome, senha, cpf, crea=None):
         except sqlite3.IntegrityError:
             return "Erro: CPF ou CREA já cadastrado."
 
-@app.route('/login', methods=['GET'])
+@app.route('/login', methods=['POST'])
 def login_usuario(cpf, senha):
     """Realiza o login e retorna o tipo de usuário (Agricultor ou Agrônomo)."""
     senha_hash = hash_senha(senha)
