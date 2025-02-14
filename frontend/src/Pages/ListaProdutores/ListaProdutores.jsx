@@ -8,6 +8,8 @@ function ListaProdutores() {
   const [produtores, setProdutores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [cpf, setCpf] = useState("");
   let navigate = useNavigate();
 
   useEffect(() => {
@@ -23,7 +25,18 @@ function ListaProdutores() {
         const response = await api.get("http://localhost:5000/produtores", {
           params: { agronomo_id: agronomoId },
         });
-        setProdutores(response.data || []); // Garante que o estado será um array
+
+        console.log("Dados recebidos:", response.data);
+
+        // Verifica se response.data é um array ou um objeto único
+        if (Array.isArray(response.data)) {
+          setProdutores(response.data);
+        } else if (response.data && response.data.id) {
+          setProdutores([response.data]); // Garante que mesmo um único objeto fique dentro de um array
+        } else {
+          console.error("Formato inesperado:", response.data);
+          setProdutores([]);
+        }
       } catch (error) {
         console.error(
           "Erro ao buscar produtores:",
@@ -38,12 +51,33 @@ function ListaProdutores() {
     fetchProdutores();
   }, []);
 
-  const navigateToDetail = () => {
-    navigate("/telaAgronomo");
-  };
+  useEffect(() => {
+    console.log("Estado atualizado:", produtores);
+  }, [produtores]);
 
-  const navigateToAddAgronomo = () => {
-    navigate("/adicionarAgronomo");
+  const handleAddProdutor = async () => {
+    const agronomoId = localStorage.getItem("agronomo_id");
+    if (!agronomoId || !cpf) {
+      alert("Por favor, informe um CPF válido.");
+      return;
+    }
+
+    try {
+      await api.post("http://localhost:5000/registro_analise", {
+        agronomo_id: agronomoId,
+        produtor_cpf: cpf,
+      });
+      alert("Produtor adicionado para análise com sucesso!");
+      setShowModal(false);
+      setCpf("");
+    } catch (error) {
+      console.error(
+        "Erro ao adicionar produtor:",
+        error.response?.data || error.message
+      );
+      alert("Erro ao adicionar produtor. Tente novamente.");
+      console.log(agronomoId, cpf);
+    }
   };
 
   if (loading) {
@@ -62,8 +96,8 @@ function ListaProdutores() {
         </h1>
         <div className="text-center mb-4">
           <button
-            onClick={navigateToAddAgronomo}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => setShowModal(true)}
+            className="bg-secondary text-white px-4 py-2 rounded"
           >
             Adicionar Produtor
           </button>
@@ -74,7 +108,7 @@ function ListaProdutores() {
               <ProdutorCard
                 key={produtor.id}
                 produtor={produtor}
-                navigateToDetail={navigateToDetail}
+                navigateToDetail={() => navigate("/telaAgronomo")}
               />
             ))}
           </div>
@@ -84,6 +118,36 @@ function ListaProdutores() {
           </p>
         )}
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-96">
+            <h2 className="text-xl font-bold mb-4">Adicionar Produtor</h2>
+            <input
+              type="text"
+              placeholder="Digite o CPF do produtor"
+              value={cpf}
+              onChange={(e) => setCpf(e.target.value)}
+              className="border p-2 w-full mb-4"
+            />
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => setShowModal(false)}
+                className="bg-gray-400 text-white px-4 py-2 rounded"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleAddProdutor}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Adicionar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer
         backgroundColor="primary"
         title="Voltar para a tela inicial"

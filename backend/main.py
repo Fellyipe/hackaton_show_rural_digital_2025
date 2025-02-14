@@ -253,7 +253,7 @@ def login_usuario():
 
 @app.route('/produtores', methods=['GET'])
 def produtores():
-    produtor_id = request.args.get("id")
+    produtor_id = request.args.get("agronomo_id")
 
     if not produtor_id:
         return jsonify({"erro": "ID do produtor é obrigatório"}), 400

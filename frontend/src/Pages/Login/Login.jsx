@@ -46,15 +46,17 @@ function Login() {
       <div className="mt-10">
         <img src={Logo} alt="logotipo" />
       </div>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full md:w-96">
         <div>
           <input
             className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
             id="cpf"
-            type="number"
-            placeholder="Cpf"
+            type="string"
+            placeholder="CPF"
             value={cpf}
             onChange={(e) => setCpf(e.target.value)}
+            autoComplete="off"
+
           />
         </div>
         <div className="flex items-center justify-center bg-white rounded px-2">
@@ -87,7 +89,7 @@ function Login() {
       <Footer
         backgroundColor="primary"
         title="Não tem uma conta? Cadastre-se"
-        page="/registro"
+        page="/cadastro"
       />
     </div>
   );
