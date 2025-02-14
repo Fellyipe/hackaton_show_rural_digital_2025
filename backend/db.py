@@ -30,6 +30,10 @@ def init_db():
                 valor TEXT,
                 data DATE,
                 classificacao TEXT,
+                calculo_recomendado FLOAT,
+                cooperativa_recomendada TEXT,
+                valor_cooperativa FLOAT,
+                sugestao TEXT,
                 FOREIGN KEY (agricultor_id) REFERENCES Agricultores(id),
                 FOREIGN KEY (agronomo_id) REFERENCES Agronomos(id)
             );

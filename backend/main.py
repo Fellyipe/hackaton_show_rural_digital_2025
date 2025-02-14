@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import csv
+import PyPDF2
 from datetime import datetime
 import sqlite3
 from db import init_db
@@ -25,9 +26,6 @@ MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-file_path = "FREQUENCIA.pdf"
-
-
 init_db()
 
 CSV_FOLDER = "csv_files"
@@ -37,70 +35,58 @@ ALLOWED_EXTENSIONS = {'pdf'}
 os.makedirs(CSV_FOLDER, exist_ok=True)
 
 
+
 def allowed_file(filename):
     """Verifica se o arquivo tem a extensão .pdf"""
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def save_csv(data, csv_filename):
-    """Salva os dados extraídos em um arquivo CSV"""
-    if not data:
-        return None
-    
-    csv_path = os.path.join(CSV_FOLDER, csv_filename)
-    
-    with open(csv_path, mode='w', newline='', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames=data[0].keys())
-        writer.writeheader()
-        writer.writerows(data)
-    
-    return csv_path
-
-def extract_tables_from_pdf(file_path):
-    """Extrai tabelas do PDF e retorna os dados formatados"""
-    tables = []
-    with pdfplumber.open(file_path) as pdf:
-        for page in pdf.pages:
-            table = page.extract_table()
-            if table:
-                header = table[0]
-                data_rows = table[1:]
-                
-                for row in data_rows:
-                    row_dict = dict(zip(header, row))
-                    tables.append(row_dict)
-    
-    return tables if tables else None
+def extract_text_from_pdf(file_path):
+    """Extrai o texto de um PDF usando PyPDF2"""
+    extracted_text = []
+    with open(file_path, "rb") as file:
+        reader = PyPDF2.PdfReader(file)
+        for page in reader.pages:
+            text = page.extract_text()
+            if text:
+                extracted_text.append(text)
+    return "\n".join(extracted_text)
 
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
-    """Processa o PDF, extrai as tabelas e salva como CSV"""
+    """Recebe um PDF, extrai o texto e salva como CSV"""
+    if 'pdf' not in request.files:
+        return jsonify({'error': 'Nenhum arquivo enviado!'}), 400
 
     pdf_file = request.files['pdf']
-    if pdf_file.filename == '' or not allowed_file(pdf_file.filename):
-        return jsonify({'error': 'Arquivo inválido. Apenas PDFs são permitidos.'}), 450
 
-    # Garante um nome seguro para o arquivo CSV
+    if pdf_file.filename == '':
+        return jsonify({'error': 'Nome do arquivo vazio!'}), 400
+
+    if not allowed_file(pdf_file.filename):
+        return jsonify({'error': 'Arquivo inválido. Apenas PDFs são permitidos.'}), 400
+
     filename = secure_filename(pdf_file.filename)
-    csv_filename = f"{os.path.splitext(filename)[0]}.csv"
-
-    # Salva temporariamente o PDF para extração
     temp_pdf_path = os.path.join(UPLOAD_FOLDER, filename)
     pdf_file.save(temp_pdf_path)
 
-    # Extrai os dados das tabelas
-    extracted_data = extract_tables_from_pdf(temp_pdf_path)
+    extracted_text = extract_text_from_pdf(temp_pdf_path)
+    
+    if not extracted_text:
+        os.remove(temp_pdf_path)
+        return jsonify({'error': 'Nenhum texto encontrado no PDF'}), 400
 
-    if not extracted_data:
-        os.remove(temp_pdf_path)  # Remove o PDF temporário se não houver dados
-        return jsonify({'error': 'Nenhuma tabela encontrada no PDF'}), 400
+    csv_filename = f"{os.path.splitext(filename)[0]}.csv"
+    csv_path = os.path.join(CSV_FOLDER, csv_filename)
 
-    # Salva os dados extraídos em CSV
-    csv_path = save_csv(extracted_data, csv_filename)
+    with open(csv_path, mode='w', newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        for line in extracted_text.split("\n"):
+            writer.writerow([line])
 
-    # Remove o PDF temporário após a extração
     os.remove(temp_pdf_path)
 
     return jsonify({'message': 'PDF processado com sucesso!', 'csv_file': csv_path}), 200
+
 # Definindo os intervalos de referência para os parâmetros.
 # Você pode ajustar e adicionar os intervalos para os demais parâmetros.
 
@@ -320,6 +306,40 @@ def registrar_analise():
         conn.commit()
 
         return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
+
+@app.route('/atualizar_analise/', methods=['PUT'])
+def atualizar_analise(analise_id):
+    """Atualiza os dados de uma análise existente com base em novos cálculos"""
+    dados = request.json
+
+    parametro = dados.get("parametro")
+    valor = dados.get("valor")
+    classificacao = dados.get("classificacao")
+
+    if not (parametro and valor and classificacao):
+        return jsonify({"erro": "Todos os campos são obrigatórios"}), 400
+
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+
+        # Verifica se a análise existe
+        cursor.execute("SELECT id FROM Analises WHERE id = ?", (analise_id,))
+        analise = cursor.fetchone()
+
+        if not analise:
+            return jsonify({"erro": "Análise não encontrada"}), 404
+
+        # Atualiza os dados da análise
+        cursor.execute("""
+            UPDATE Analises 
+            SET parametro = ?, valor = ?, classificacao = ?
+            WHERE id = ?
+        """, (parametro, valor, classificacao, analise_id))
+
+        conn.commit()
+
+    return jsonify({"mensagem": "Análise atualizada com sucesso!"}), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
