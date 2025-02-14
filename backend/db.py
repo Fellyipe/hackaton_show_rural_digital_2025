@@ -19,7 +19,7 @@ def init_db():
                 nome TEXT NOT NULL,
                 senha TEXT NOT NULL,
                 cpf TEXT UNIQUE NOT NULL,
-                crea TEXT UNIQUE NOT NULL
+                cref TEXT UNIQUE NOT NULL
             );
 
             CREATE TABLE IF NOT EXISTS Analises (
