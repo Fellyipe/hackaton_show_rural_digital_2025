@@ -286,7 +286,7 @@ def registrar_analise():
     valor = dados.get("valor")
     classificacao = dados.get("classificacao")
 
-    if not (agronomo_id and produtor_cpf and parametro and valor and classificacao):
+    if not (agronomo_id and produtor_cpf):
         return jsonify({"erro": "Todos os campos são obrigatórios"}), 400
 
     with sqlite3.connect(DATABASE) as conn:
