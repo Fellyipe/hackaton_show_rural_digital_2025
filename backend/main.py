@@ -99,13 +99,17 @@ def upload_pdf():
         os.remove(temp_pdf_path)
         return jsonify({"error": "Nenhum dado válido encontrado no PDF"}), 400
 
-    cpf = request.form.get("cpf")
-    cref = request.form.get("cref")
+    analiseId = request.form.get("analiseId")
     
-    if not cpf or not cref:
-        return jsonify({"error": "CPF e CREF são obrigatórios!"}), 400
+    if not analiseId:
+        return jsonify({"error": "O campo 'analiseId' é obrigatório!"}), 400
+    
+    try:
+        analiseId = int(analiseId)  # Converte para inteiro para evitar SQL Injection
+    except ValueError:
+        return jsonify({"error": "O campo 'analiseId' deve ser um número inteiro válido!"}), 400
 
-    save_analysis(cpf, cref, averages)
+    save_analysis(analiseId, averages)
     os.remove(temp_pdf_path)
 
     return jsonify({"message": "PDF processado com sucesso!", "data": averages}), 200
@@ -113,29 +117,34 @@ def upload_pdf():
 # Definindo os intervalos de referência para os parâmetros.
 # Você pode ajustar e adicionar os intervalos para os demais parâmetros.
 
-def save_analysis(cpf, cref, averages):
-    """Salva as médias no banco de dados"""
+def save_analysis(analiseId, averages):
+    """Salva as médias no banco de dados vinculando ao analiseId"""
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
-        cursor.execute("INSERT OR IGNORE INTO Agricultores (cpf) VALUES (?)", (cpf,))
-        cursor.execute("INSERT OR IGNORE INTO Agronomos (cref) VALUES (?)", (cref,))
-
-        cursor.execute("SELECT id FROM Agricultores WHERE cpf = ?", (cpf,))
-        agricultor_id = cursor.fetchone()[0]
-        cursor.execute("SELECT id FROM Agronomos WHERE cref = ?", (cref,))
-        agronomo_id = cursor.fetchone()[0]
 
         data_atual = datetime.date.today()
 
         for param, value in averages.items():
             classificacao = classify_value(param, value)
-            cursor.execute(
-                """INSERT INTO Analises (agricultor_id, agronomo_id, parametro, valor, data, classificacao) 
-                   VALUES (?, ?, ?, ?, ?, ?)""",
-                (agricultor_id, agronomo_id, param, value, data_atual, classificacao),
-            )
-        conn.commit()
 
+            # Atualiza a análise existente com os novos valores
+            cursor.execute(
+                """UPDATE Analises 
+                   SET parametro = ?, valor = ?, data = ?, classificacao = ? 
+                   WHERE id = ?""",
+                (param, value, data_atual, classificacao, analiseId)
+            )
+
+            # Se a análise não existir, insere uma nova
+            if cursor.rowcount == 0:
+                cursor.execute(
+                    """INSERT INTO Analises (id, parametro, valor, data, classificacao) 
+                       VALUES (?, ?, ?, ?, ?)""",
+                    (analiseId, param, value, data_atual, classificacao)
+                )
+
+        conn.commit()
+        
 def classify_value(parameter, value):
     """
     Classifica um valor para um determinado parâmetro com base nos intervalos definidos.
