@@ -12,6 +12,8 @@ function AddAnalise() {
   const [valorPorKg, setValorPorKg] = useState("");
   const [recomendacaoAdicional, setRecomendacaoAdicional] = useState("");
   const analiseId = 1;
+  const agronomoId = localStorage.getItem("agronomo_id" || null);
+  const produtorId = localStorage.getItem("produtor_id" || null);
 
   const handleFileUpload = async (file) => {
     try {
@@ -36,7 +38,10 @@ function AddAnalise() {
     if (recomendacao) dados.cooperativa_recomendada = recomendacao;
     if (valorPorKg) dados.valor_cooperativa = valorPorKg;
     if (recomendacaoAdicional) dados.sugestao = recomendacaoAdicional;
+    if (agronomoId) dados.agronomo_id = agronomoId;
+    if (produtorId) dados.produtor_id = produtorId;
     dados.analise_id = analiseId;
+
     console.log("Dados a serem enviados:", dados);
 
     try {
