@@ -335,12 +335,6 @@ def registrar_analise():
 
         return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
 
-from flask import Flask, request, jsonify
-import sqlite3
-
-app = Flask(__name__)
-DATABASE = "banco_de_dados.db"
-
 @app.route('/atualizar_analise', methods=['PUT'])
 def atualizar_analise(analise_id):
     """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
