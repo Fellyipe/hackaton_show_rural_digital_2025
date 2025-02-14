@@ -73,7 +73,7 @@ function Registro() {
       navigate("/Login");
     } catch (error) {
       console.error("Erro ao registrar", error);
-      setError(error.response?.data?.erro || "Erro ao realizar login");
+      setError(error.response?.data?.erro || "Erro ao realizar Cadastro");
     }
   };
 
