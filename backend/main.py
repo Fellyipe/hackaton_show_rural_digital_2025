@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
+from datetime import datetime
 import sqlite3
 from db import init_db
 from refs import reference_intervals
@@ -273,6 +274,43 @@ def produtores():
             "nome": agricultor[1],
             "analises": analises_formatadas
         }), 200
+
+@app.route('/registro_analise', methods=['POST'])
+def registrar_analise():
+    """Registra uma nova análise associando um agrônomo a um agricultor pelo CPF."""
+    dados = request.json
+    
+    agronomo_id = dados.get("agronomo_id")
+    produtor_cpf = dados.get("produtor_cpf")
+    parametro = dados.get("parametro")
+    valor = dados.get("valor")
+    classificacao = dados.get("classificacao")
+
+    if not (agronomo_id and produtor_cpf and parametro and valor and classificacao):
+        return jsonify({"erro": "Todos os campos são obrigatórios"}), 400
+
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+
+        # Busca o ID do agricultor pelo CPF
+        cursor.execute("SELECT id FROM Agricultores WHERE cpf = ?", (produtor_cpf,))
+        agricultor = cursor.fetchone()
+
+        if not agricultor:
+            return jsonify({"erro": "Agricultor não encontrado"}), 404
+
+        agricultor_id = agricultor[0]
+        data_atual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")  # Formata a data e hora
+
+        # Insere a nova análise sem precisar da data na requisição
+        cursor.execute("""
+            INSERT INTO Analises (agricultor_id, agronomo_id, parametro, valor, data, classificacao)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (agricultor_id, agronomo_id, parametro, valor, data_atual, classificacao))
+
+        conn.commit()
+
+        return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)

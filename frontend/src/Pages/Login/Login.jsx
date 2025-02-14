@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
-import Logo from "/public/logo.png";
+import Logo from "/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
 
 import api from "../../services/api.js";
