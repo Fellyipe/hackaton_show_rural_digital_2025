@@ -15,28 +15,28 @@ function TelaAgronomo() {
 
           <div>
             <p className="text-2xl text-white-green">Potassio(K)</p>
-            <spam className="text-4xl text-red">Baixo</spam>
+            <span className="text-4xl text-red">Baixo</span>
           </div>
           <div>
             <p className="text-2xl text-white-green">Quantidade sugerida</p>
-            <spam className="text-4xl font-bold text-white-green">50Kg</spam>
+            <span className="text-4xl font-bold text-white-green">50Kg</span>
           </div>
           <div>
             <p className="text-2xl text-white-green">
               Recomendação de compra do agronomo:
             </p>
-            <spam className="text-2xl text-white-green">
+            <span className="text-2xl text-white-green">
               Copavel: R$2.400,00
-            </spam>
+            </span>
           </div>
           <div>
             <p className="text-2xl text-white-green">
               Recomendação do agronomo:
             </p>
-            <spam className="text-2xl text-white-green">
+            <span className="text-2xl text-white-green">
               lorem ipsum dolor sit amet escruz te vier no madare to su lorem
               ipsum dolor sit amet escruz te vier no madare to su
-            </spam>
+            </span>
           </div>
           <button
             onClick={() => {}}
