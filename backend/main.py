@@ -99,9 +99,8 @@ def upload_pdf():
         os.remove(temp_pdf_path)
         return jsonify({"error": "Nenhum dado válido encontrado no PDF"}), 400
 
-    dados = request.json
-    analiseId = dados.get("analiseId")
-    
+    analiseId = request.form.get("analiseId")  
+      
     if not analiseId:
         return jsonify({"error": "O campo 'analiseId' é obrigatório!"}), 400
     
