@@ -122,13 +122,13 @@ def upload_pdf():
     
     pdf_file = request.files['pdf']
     if pdf_file.filename == '' or not allowed_file(pdf_file.filename):
-        return jsonify({'error': 'Arquivo inválido'}), 400
+        return jsonify({'error': 'Arquivo inválido'}), 450
     
     pdf_file.seek(0, os.SEEK_END)
     file_size = pdf_file.tell()
     pdf_file.seek(0)
     if file_size > MAX_FILE_SIZE:
-        return jsonify({'error': 'Arquivo excede 5MB'}), 400
+        return jsonify({'error': 'Arquivo excede 5MB'}), 500
     
     filename = secure_filename(pdf_file.filename)
     file_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -145,8 +145,8 @@ def upload_pdf():
     
     cpf = request.form.get('cpf')
     cref = request.form.get('cref')
-    if not cpf or not cref:
-        return jsonify({'error': 'CPF e cref são obrigatórios'}), 400
+ #   if not cpf or not cref:
+  #      return jsonify({'error': 'CPF e cref são obrigatórios'}), 550
     
     save_analysis(cpf, cref, extracted_data)
     return jsonify({'message': 'PDF processado e salvo com sucesso!'})
