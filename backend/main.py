@@ -13,15 +13,6 @@ import hashlib
 from werkzeug.utils import secure_filename
 from graph_utils import *
 
-url = "http://127.0.0.1:5000/upload_pdf"  # Confirme se a API está rodando nessa porta
-file_path = "FREQUENCIA.pdf"
-
-with open(file_path, "rb") as pdf_file:
-    files = {"pdf": pdf_file}
-    response = requests.post(url, files=files)
-
-print(response.json())  # Mostra a resposta do servidor
-
 #df = pd.read_csv("dados.csv", delimiter=";", header=0, names=["latitude", "longitude"])
 #compute_centroid(parse_src_file(df))
 
