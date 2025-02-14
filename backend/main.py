@@ -131,13 +131,14 @@ def save_analysis(analiseId, averages):
             # Certificando-se de que são strings onde necessário
             param = str(param)
             value = str(value)
+            id = analiseId
             classificacao = str(classificacao)
 
             # Atualiza a análise existente com os novos valores
             cursor.execute(
                 """UPDATE Analises 
                    SET parametro = ?, valor = ?, data = ?, classificacao = ? 
-                   WHERE id = ?""",
+                   WHERE id = analiseId""",
                 (param, value, data_atual, classificacao, analiseId)
             )
 
