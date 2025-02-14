@@ -340,6 +340,47 @@ def atualizar_analise(analise_id):
 
     return jsonify({"mensagem": "Análise atualizada com sucesso!"}), 200
 
+@app.route('/resultados_analise', methods=['GET'])
+def obter_resultados_analise():
+    """Retorna todas as análises registradas sem agrupar por parâmetro."""
+    try:
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+
+            # Obtém todas as análises sem agrupamento por parâmetro
+            cursor.execute("""
+                SELECT id, agricultor_id, agronomo_id, parametro, valor, data, classificacao, 
+                       calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao
+                FROM Analises
+                ORDER BY id
+            """)
+            todas_analises = cursor.fetchall()
+
+            if not todas_analises:
+                return jsonify({"erro": "Nenhuma análise encontrada."}), 404
+
+            # Formata os resultados
+            analises_formatadas = [
+                {
+                    "id": analise[0],
+                    "agricultor_id": analise[1],
+                    "agronomo_id": analise[2],
+                    "parametro": analise[3],
+                    "valor": analise[4],
+                    "data": analise[5],
+                    "classificacao": analise[6],
+                    "calculo_recomendado": analise[7],
+                    "cooperativa_recomendada": analise[8],
+                    "valor_cooperativa": analise[9],
+                    "sugestao": analise[10]
+                }
+                for analise in todas_analises
+            ]
+
+            return jsonify({"analises": analises_formatadas}), 200
+
+    except sqlite3.Error as e:
+        return jsonify({"erro": f"Erro no banco de dados: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
