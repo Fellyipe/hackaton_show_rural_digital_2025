@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import ProdutorCard from "../../components/ProdutorCard/ProdutorCard";
 import { useNavigate } from "react-router";
 import Footer from "../../components/footer/Footer";
-import api from "../../services/api"; //
+import api from "../../services/api";
 
 function ListaProdutores() {
   const [produtores, setProdutores] = useState([]);
@@ -23,9 +23,12 @@ function ListaProdutores() {
         const response = await api.get("http://localhost:5000/produtores", {
           params: { agronomo_id: agronomoId },
         });
-        setProdutores(response.data);
+        setProdutores(response.data || []); // Garante que o estado será um array
       } catch (error) {
-        console.error("Erro ao buscar produtores:", error);
+        console.error(
+          "Erro ao buscar produtores:",
+          error.response?.data || error.message
+        );
         setError("Erro ao carregar produtores.");
       } finally {
         setLoading(false);
@@ -39,11 +42,15 @@ function ListaProdutores() {
     navigate("/telaAgronomo");
   };
 
+  const navigateToAddAgronomo = () => {
+    navigate("/adicionarAgronomo");
+  };
+
   if (loading) {
     return <p className="text-center mt-10">Carregando...</p>;
   }
 
-  if (error) {
+  if (error && error !== "Erro ao carregar produtores.") {
     return <p className="text-center mt-10 text-red-500">{error}</p>;
   }
 
@@ -53,19 +60,29 @@ function ListaProdutores() {
         <h1 className="text-3xl font-bold text-bold-text mb-6 text-center mt-10">
           Seus produtores
         </h1>
-        <div className="space-y-4">
-          {produtores.length > 0 ? (
-            produtores.map((produtor) => (
+        <div className="text-center mb-4">
+          <button
+            onClick={navigateToAddAgronomo}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Adicionar Produtor
+          </button>
+        </div>
+        {produtores.length > 0 ? (
+          <div className="space-y-4">
+            {produtores.map((produtor) => (
               <ProdutorCard
                 key={produtor.id}
                 produtor={produtor}
                 navigateToDetail={navigateToDetail}
               />
-            ))
-          ) : (
-            <p className="text-center">Nenhum produtor encontrado.</p>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center">
+            Nenhum produtor encontrado. Cadastre um produtor para começar.
+          </p>
+        )}
       </div>
       <Footer
         backgroundColor="primary"
