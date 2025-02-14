@@ -353,7 +353,7 @@ def atualizar_analise():
     """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
     dados = request.json
     print("Dados recebidos:", dados)
-    analiseId = dados.get("analiseId")
+    analiseId = dados.get("analise_id")
     if not analiseId:
         return jsonify({"erro": "O ID da análise deve ser fornecido."}), 400
 
@@ -377,13 +377,15 @@ def atualizar_analise():
             cooperativa_recomendada = dados.get("cooperativa_recomendada", analise[1])
             valor_cooperativa = dados.get("valor_cooperativa", analise[2])
             sugestao = dados.get("sugestao", analise[3])
+            agronomo_id = dados.get("agronomoId", analise[4])
+            produtor_id = dados.get("produtorId", analise[5])
 
             # Atualiza apenas os campos necessários
             cursor.execute("""
                 UPDATE Analises 
-                SET calculo_recomendado = ?, cooperativa_recomendada = ?, valor_cooperativa = ?, sugestao = ?
+                SET agricultor_id = ?, agronomo_id = ?, calculo_recomendado = ?, cooperativa_recomendada = ?, valor_cooperativa = ?, sugestao = ?
                 WHERE id = ?
-            """, (calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao, analiseId))
+            """, (agricultor_id, produtor_id, calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao, analiseId))
 
             conn.commit()
 
