@@ -4,7 +4,7 @@ import Footer from "../../components/footer/Footer";
 function TelaProdutor() {
   return (
     <div>
-      <main className="bg-secondary w-full h-screen mt-40 rounded-t-2xl p-4">
+      <main className="bg-secondary w-full h-screen mt-40 rounded-t-2xl p-4 md:px-16 ">
         <div className="flex w-full justify-end items-end">
           <img className="-mt-32" src={Sprout} alt="sprout" />
         </div>
