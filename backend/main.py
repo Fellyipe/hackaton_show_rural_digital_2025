@@ -100,14 +100,9 @@ def upload_pdf():
         return jsonify({"error": "Nenhum dado válido encontrado no PDF"}), 400
 
     analiseId = request.form.get("analiseId")  
-      
+
     if not analiseId:
         return jsonify({"error": "O campo 'analiseId' é obrigatório!"}), 400
-    
-    try:
-        analiseId = int(analiseId)  # Converte para inteiro para evitar SQL Injection
-    except ValueError:
-        return jsonify({"error": "O campo 'analiseId' deve ser um número inteiro válido!"}), 400
 
     save_analysis(analiseId, averages)
     os.remove(temp_pdf_path)
