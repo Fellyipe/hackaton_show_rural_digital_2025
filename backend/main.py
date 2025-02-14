@@ -146,7 +146,7 @@ def save_analysis(analiseId, averages):
             if cursor.rowcount == 0:
                 cursor.execute(
                     """INSERT INTO Analises ( parametro, valor, data, classificacao) 
-                       VALUES (?, ?, ?, ?, ?)""",
+                       VALUES (?, ?, ?, ?)""",
                     ( param, value, data_atual, classificacao)
                 )
 
@@ -377,15 +377,15 @@ def atualizar_analise():
             cooperativa_recomendada = dados.get("cooperativa_recomendada", analise[1])
             valor_cooperativa = dados.get("valor_cooperativa", analise[2])
             sugestao = dados.get("sugestao", analise[3])
-            agronomo_id = dados.get("agronomoId", analise[4])
-            produtor_id = dados.get("produtorId", analise[5])
+            agronomo_id = dados.get("agronomo_id")
+            agricultor_id = dados.get("produtorId")
 
             # Atualiza apenas os campos necessários
             cursor.execute("""
                 UPDATE Analises 
-                SET agricultor_id = ?, agronomo_id = ?, calculo_recomendado = ?, cooperativa_recomendada = ?, valor_cooperativa = ?, sugestao = ?
+                SET agricultor_id = ?, agricultor_id = ?, calculo_recomendado = ?, cooperativa_recomendada = ?, valor_cooperativa = ?, sugestao = ?
                 WHERE id = ?
-            """, (agricultor_id, produtor_id, calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao, analiseId))
+            """, (agricultor_id, agronomo_id, calculo_recomendado, cooperativa_recomendada, valor_cooperativa, sugestao, analiseId))
 
             conn.commit()
 
