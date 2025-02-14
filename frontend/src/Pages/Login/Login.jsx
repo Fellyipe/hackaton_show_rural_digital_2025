@@ -35,7 +35,7 @@ function Login() {
         </div>
         <div className="flex items-center justify-center bg-white rounded px-2">
           <input
-            className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
+            className="appearance-none border-none rounded w-full py-2 px-1 text-gray-700 bg-white focus:outline-none"
             id="password"
             type={showPassword ? "text" : "password"}
             placeholder="Senha"
