@@ -124,7 +124,7 @@ def save_analysis(analiseId, averages):
 
             # Converte valores para string para evitar erro de tipo
             param = str(param)
-            value = str(value)
+            value = str(round(value, 3))  # Converte float para string com 3 casas decimais
             classificacao = str(classificacao)
 
             # Atualiza a análise existente com os novos valores
@@ -144,6 +144,7 @@ def save_analysis(analiseId, averages):
                 )
 
         conn.commit()
+
 
 
 def classify_value(parameter, value):
