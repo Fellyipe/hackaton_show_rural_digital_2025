@@ -174,7 +174,7 @@ def registrar_usuario():
     nome = dados.get("nome")
     senha = dados.get("senha")
     cpf = dados.get("cpf")
-    crea = dados.get("crea")  # Opcional, pode ser None
+    cref = dados.get("crea")  # Opcional, pode ser None
 
     if not nome or not senha or not cpf:
         return jsonify({"erro": "Nome, senha e CPF são obrigatórios"}), 400
