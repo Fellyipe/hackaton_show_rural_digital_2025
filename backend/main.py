@@ -349,11 +349,11 @@ def registrar_analise():
         return jsonify({"mensagem": "Análise registrada com sucesso!", "data": data_atual}), 201
 
 @app.route('/atualizar_analise', methods=['PUT'])
-def atualizar_analise(analise_id):
+def atualizar_analise():
     """Atualiza os dados de uma análise existente sem sobrescrever campos não enviados."""
 
     dados = request.json
-
+    analiseId = dados.get("analiseId")
     # Conectar ao banco de dados
     try:
         with sqlite3.connect(DATABASE) as conn:
