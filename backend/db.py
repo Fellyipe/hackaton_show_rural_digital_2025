@@ -1,5 +1,6 @@
 import sqlite3
-from sqlite3 import DATABASE
+
+DATABASE = "banco_de_dados.db"  # Nome do arquivo do banco SQLite
 
 def init_db():
     """Cria as tabelas do banco de dados se não existirem."""

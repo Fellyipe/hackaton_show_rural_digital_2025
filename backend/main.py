@@ -1,10 +1,13 @@
 from flask import Flask, request, jsonify
 import os
+import sqlite3
 from db import init_db
 from refs import reference_intervals
 import pandas as pd
 import pdfplumber
 from werkzeug.utils import secure_filename
+
+DATABASE = "banco_de_dados.db"  # Nome do arquivo do banco SQLite
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -46,6 +49,26 @@ def extract_tables_from_pdf(file_path):
 # Definindo os intervalos de referência para os parâmetros.
 # Você pode ajustar e adicionar os intervalos para os demais parâmetros.
 
+def save_analysis(cpf, crea, data):
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("INSERT OR IGNORE INTO Agricultores (cpf) VALUES (?)", (cpf,))
+        cursor.execute("INSERT OR IGNORE INTO Agronomos (crea) VALUES (?)", (crea,))
+        
+        cursor.execute("SELECT id FROM Agricultores WHERE cpf = ?", (cpf,))
+        agricultor_id = cursor.fetchone()[0]
+        cursor.execute("SELECT id FROM Agronomos WHERE crea = ?", (crea,))
+        agronomo_id = cursor.fetchone()[0]
+        
+        for row in data:
+            for param, value in row.items():
+                if param != 'classification':
+                    classification = classify_value(param, value)
+                    cursor.execute(
+                        "INSERT INTO Analises (agricultor_id, agronomo_id, parametro, valor, classificacao) VALUES (?, ?, ?, ?, ?)",
+                        (agricultor_id, agronomo_id, param, value, classification)
+                    )
+        conn.commit()
 
 def classify_value(parameter, value):
     """
@@ -82,57 +105,51 @@ def classify_value(parameter, value):
 
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
-    # Verifica se o arquivo foi enviado com a chave 'pdf'
     if 'pdf' not in request.files:
         return jsonify({'error': 'Nenhum arquivo enviado com o nome "pdf"'}), 400
-
+    
     pdf_file = request.files['pdf']
-
-    if pdf_file.filename == '':
-        return jsonify({'error': 'Nome do arquivo vazio'}), 400
-
-    if not allowed_file(pdf_file.filename):
-        return jsonify({'error': 'Formato de arquivo inválido. Apenas PDFs são permitidos.'}), 400
-
-    # Verifica o tamanho do arquivo
+    if pdf_file.filename == '' or not allowed_file(pdf_file.filename):
+        return jsonify({'error': 'Arquivo inválido'}), 400
+    
     pdf_file.seek(0, os.SEEK_END)
     file_size = pdf_file.tell()
     pdf_file.seek(0)
     if file_size > MAX_FILE_SIZE:
-        return jsonify({'error': 'O arquivo excede o tamanho máximo permitido (5MB)'}), 400
-
-    # Garante um nome seguro e salva o arquivo
+        return jsonify({'error': 'Arquivo excede 5MB'}), 400
+    
     filename = secure_filename(pdf_file.filename)
     file_path = os.path.join(UPLOAD_FOLDER, filename)
     pdf_file.save(file_path)
+    
+    extracted_data = []
+    with pdfplumber.open(file_path) as pdf:
+        for page in pdf.pages:
+            table = page.extract_table()
+            if table:
+                header = table[0]
+                for row in table[1:]:
+                    extracted_data.append(dict(zip(header, row)))
+    
+    cpf = request.form.get('cpf')
+    crea = request.form.get('crea')
+    if not cpf or not crea:
+        return jsonify({'error': 'CPF e CREA são obrigatórios'}), 400
+    
+    save_analysis(cpf, crea, extracted_data)
+    return jsonify({'message': 'PDF processado e salvo com sucesso!'})
 
-    # Extrai as tabelas do PDF
-    extracted_tables = extract_tables_from_pdf(file_path)
+@app.route('/analises', methods=['GET'])
+def get_analises():
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT A.cpf, AG.crea, AN.parametro, AN.valor, AN.classificacao FROM Analises AN "+
+                        "JOIN Agricultores A ON AN.agricultor_id = A.id "+
+                        "JOIN Agronomos AG ON AN.agronomo_id = AG.id")
+        results = cursor.fetchall()
+    
+    return jsonify([{'cpf': row[0], 'crea': row[1], 'parametro': row[2], 'valor': row[3], 'classificacao': row[4]} for row in results])
 
-    if extracted_tables:
-        classified_tables = []
-        # Itera sobre cada tabela extraída
-        for table in extracted_tables:
-            classified_data = []
-            for row in table:
-                # Exemplo de classificação para pH
-                ph_value = row.get("pH")
-                row["pH_classification"] = classify_value('pH', ph_value)
-                
-                # Exemplo de classificação para Al³+ (ajuste o nome da coluna conforme seu PDF)
-                al_value = row.get("Al³+")
-                row["Al³+_classification"] = classify_value('Al³+', al_value)
-
-                # Você pode adicionar a classificação para outros parâmetros aqui...
-                
-                classified_data.append(row)
-            classified_tables.append(classified_data)
-        return jsonify({
-            'message': 'PDF processado com sucesso!',
-            'tables': classified_tables
-        })
-    else:
-        return jsonify({'message': 'PDF recebido, mas nenhuma tabela foi encontrada.'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
