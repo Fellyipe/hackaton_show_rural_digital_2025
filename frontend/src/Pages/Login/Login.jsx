@@ -4,8 +4,10 @@ import { Eye, EyeSlash } from "@phosphor-icons/react";
 import Logo from "/public/logo.png";
 import Footer from "../../components/footer/Footer.jsx";
 
+import api from "../../services/api.js";
+
 function Login() {
-  const [email, setEmail] = useState("");
+  const [cpf, setCpf] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
@@ -13,8 +15,24 @@ function Login() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-    console.log("Dados enviados:", email, password);
-    navigate("/listaProdutores");
+    setError(null); // Reseta o erro antes da requisição
+
+    try {
+      const response = await api.get("http://localhost:5000/login", {
+        params: {
+          cpf,
+          senha: password,
+        },
+      });
+
+      console.log("Login bem-sucedido:", response.data);
+
+      // Redireciona o usuário após o login bem-sucedido
+      navigate("/listaProdutores");
+    } catch (error) {
+      console.error("Erro no login:", error);
+      setError(error.response?.data?.erro || "Erro ao realizar login");
+    }
   }
 
   return (
@@ -26,11 +44,11 @@ function Login() {
         <div>
           <input
             className="appearance-none border-none rounded w-full py-2 px-3 text-gray-700 bg-white focus:outline-none"
-            id="email"
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="cpf"
+            type="text"
+            placeholder="Cpf"
+            value={cpf}
+            onChange={(e) => setCpf(e.target.value)}
           />
         </div>
         <div className="flex items-center justify-center bg-white rounded px-2">
