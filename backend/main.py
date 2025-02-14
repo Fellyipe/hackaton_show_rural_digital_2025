@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import os
 import csv
-import requests
 from datetime import datetime
 import sqlite3
 from db import init_db
@@ -75,8 +74,6 @@ def extract_tables_from_pdf(file_path):
 @app.route('/upload_pdf', methods=['POST'])
 def upload_pdf():
     """Processa o PDF, extrai as tabelas e salva como CSV"""
-    if 'pdf' not in request.files:
-        return jsonify({'error': 'Nenhum arquivo enviado com o nome "pdf"'}), 400
 
     pdf_file = request.files['pdf']
     if pdf_file.filename == '' or not allowed_file(pdf_file.filename):
