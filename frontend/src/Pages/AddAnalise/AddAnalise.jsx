@@ -37,6 +37,8 @@ function AddAnalise() {
     if (valorPorKg) dados.valor_cooperativa = valorPorKg;
     if (recomendacaoAdicional) dados.sugestao = recomendacaoAdicional;
     dados.analise_id = analiseId;
+    console.log("Dados a serem enviados:", dados);
+
     try {
       const response = await api.put(`/atualizar_analise`, dados);
       alert("Análise atualizada com sucesso!", response);
