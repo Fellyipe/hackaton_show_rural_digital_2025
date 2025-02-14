@@ -122,6 +122,11 @@ def save_analysis(analiseId, averages):
         for param, value in averages.items():
             classificacao = classify_value(param, value)
 
+            # Converte valores para string para evitar erro de tipo
+            param = str(param)
+            value = str(value)
+            classificacao = str(classificacao)
+
             # Atualiza a análise existente com os novos valores
             cursor.execute(
                 """UPDATE Analises 
@@ -139,6 +144,7 @@ def save_analysis(analiseId, averages):
                 )
 
         conn.commit()
+
 
 def classify_value(parameter, value):
     """
