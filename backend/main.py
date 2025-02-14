@@ -166,29 +166,45 @@ def hash_senha(senha):
     return hashlib.sha256(senha.encode()).hexdigest()
 
 @app.route('/registrar', methods=['POST'])
-def registrar_usuario(nome, senha, cpf, crea=None):
+def registrar_usuario():
     """Registra um novo usuário como agricultor ou agrônomo."""
+    dados = request.json  # Obtém os dados do corpo da requisição
+    nome = dados.get("nome")
+    senha = dados.get("senha")
+    cpf = dados.get("cpf")
+    crea = dados.get("crea")  # Opcional, pode ser None
+
+    if not nome or not senha or not cpf:
+        return jsonify({"erro": "Nome, senha e CPF são obrigatórios"}), 400
+
     senha_hash = hash_senha(senha)
     
     with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
         try:
             if crea:
-                # Registro de Agrônomo
-                cursor.execute("INSERT INTO Agronomos (nome, senha, cpf, crea) VALUES (?, ?, ?, ?)", 
-                               (nome, senha_hash, cpf, crea))
-                return "Agrônomo registrado com sucesso!"
+                cursor.execute(
+                    "INSERT INTO Agronomos (nome, senha, cpf, crea) VALUES (?, ?, ?, ?)", 
+                    (nome, senha_hash, cpf, crea)
+                )
+                return jsonify({"mensagem": "Agrônomo registrado com sucesso!"}), 201
             else:
-                # Registro de Agricultor
-                cursor.execute("INSERT INTO Agricultores (nome, senha, cpf) VALUES (?, ?, ?)", 
-                               (nome, senha_hash, cpf))
-                return "Agricultor registrado com sucesso!"
+                cursor.execute(
+                    "INSERT INTO Agricultores (nome, senha, cpf) VALUES (?, ?, ?)", 
+                    (nome, senha_hash, cpf)
+                )
+                return jsonify({"mensagem": "Agricultor registrado com sucesso!"}), 201
         except sqlite3.IntegrityError:
-            return "Erro: CPF ou CREA já cadastrado."
+            return jsonify({"erro": "CPF ou CREA já cadastrado"}), 400
+
 
 @app.route('/login', methods=['POST'])
 def login_usuario(cpf, senha):
     """Realiza o login e retorna o tipo de usuário (Agricultor ou Agrônomo)."""
+    dados = request.json  # Obtém os dados do corpo da requisição
+    senha = dados.get("senha")
+    cpf = dados.get("cpf")
+    
     senha_hash = hash_senha(senha)
     
     with sqlite3.connect(DATABASE) as conn:
