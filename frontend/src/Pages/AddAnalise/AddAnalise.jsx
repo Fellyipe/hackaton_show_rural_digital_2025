@@ -1,16 +1,23 @@
-import React from "react";
+import { useState } from "react";
 import Footer from "../../components/footer/Footer.jsx";
 import Ground from "../../assets/ground.png";
 import DragAndDropPDF from "../../components/DragAndDropPDF/DragAndDropPDF.jsx";
 
 function AddAnalise() {
+  const [file, setFile] = useState(null);
+  const [amostra, setAmostra] = useState(0.38);
+  const [calculo, setCalculo] = useState(null);
+  const [recomendacao, setRecomendacao] = useState(null);
+  const [valorPorKg, setValorPorKg] = useState(null);
+  const [recomendacaoAdicional, setRecomendacaoAdicional] = useState(null);
+
   function handleFileUpload(file) {
     console.log("Arquivo recebido:", file);
   }
 
   return (
     <div>
-      <main className="bg-primary w-full mt-40 rounded-t-2xl p-4">
+      <form className="bg-primary w-full mt-40 rounded-t-2xl p-4">
         <div className="flex w-full justify-end items-end">
           <img className="-mt-40 size-48" src={Ground} alt="sprout" />
         </div>
@@ -25,15 +32,15 @@ function AddAnalise() {
           <div>
             <p className="text-xl text-emerald">Valor encontrado na amostra:</p>
             <span className="text-3xl font-bold text-white-green">
-              {/* Variavel de amostra */}0.38% cmolc/dm3
+              {amostra}% cmolc/dm3
             </span>
           </div>
 
           <div>
             <p className="text-xl text-emerald">Calculo sugerido:</p>
             <span className="text-xl font-bold text-white-green">
-              {/* Variavel de calculo */}0.30 {">"} 0.40 ={" "}
-              <input type="text" className="bg-white rounded-sm w-14" />
+              0.30 {">"} 0.40 ={" "}
+              <input type="text" placeholder="Kg" className="bg-white text-black px-2 rounded-sm w-14"  onChange={(e)=> setCalculo(e.target.value)}/>
             </span>
           </div>
 
@@ -44,11 +51,13 @@ function AddAnalise() {
                 placeholder="Nome da Cooperativa ou Empresa"
                 type="text"
                 className="bg-white rounded-xl h-12 w-80 p-4"
+                onChange={(e) => setRecomendacao(e.target.value)}
               />
               <input
                 placeholder="Valor por Kg"
                 type="text"
                 className="bg-white rounded-xl h-12 w-48 p-4"
+                onChange={(e) => setValorPorKg(e.target.value)}
               />
             </div>
           </div>
@@ -61,6 +70,7 @@ function AddAnalise() {
                 id="recomendacoes"
                 cols="30"
                 rows="5"
+                onChange={(e) => setRecomendacaoAdicional(e.target.value)}
               ></textarea>
             </div>
           </div>
@@ -71,7 +81,7 @@ function AddAnalise() {
             Salvar Analise
           </button>
         </div>
-      </main>
+      </form>
 
       <Footer title="Voltar para produtores" page="/listaProdutores" />
     </div>
