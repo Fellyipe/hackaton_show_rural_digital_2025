@@ -99,7 +99,8 @@ def upload_pdf():
         os.remove(temp_pdf_path)
         return jsonify({"error": "Nenhum dado válido encontrado no PDF"}), 400
 
-    analiseId = request.form.get("analiseId")
+    dados = request.json
+    analiseId = dados.get("analiseId")
     
     if not analiseId:
         return jsonify({"error": "O campo 'analiseId' é obrigatório!"}), 400
@@ -144,7 +145,7 @@ def save_analysis(analiseId, averages):
                 )
 
         conn.commit()
-        
+
 def classify_value(parameter, value):
     """
     Classifica um valor para um determinado parâmetro com base nos intervalos definidos.
