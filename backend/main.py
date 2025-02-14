@@ -5,6 +5,7 @@ from db import init_db
 from refs import reference_intervals
 import pandas as pd
 import pdfplumber
+import hashlib
 from werkzeug.utils import secure_filename
 from graph_utils import *
 
@@ -159,6 +160,52 @@ def get_analises():
     
     return jsonify([{'cpf': row[0], 'crea': row[1], 'parametro': row[2], 'valor': row[3], 'classificacao': row[4]} for row in results])
 
+def hash_senha(senha):
+    """Criptografa a senha usando SHA-256."""
+    return hashlib.sha256(senha.encode()).hexdigest()
 
+def registrar_usuario(nome, senha, cpf, crea=None):
+    """Registra um novo usuário como agricultor ou agrônomo."""
+    senha_hash = hash_senha(senha)
+    
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        try:
+            if crea:
+                # Registro de Agrônomo
+                cursor.execute("INSERT INTO Agronomos (nome, senha, cpf, crea) VALUES (?, ?, ?, ?)", 
+                               (nome, senha_hash, cpf, crea))
+                return "Agrônomo registrado com sucesso!"
+            else:
+                # Registro de Agricultor
+                cursor.execute("INSERT INTO Agricultores (nome, senha, cpf) VALUES (?, ?, ?)", 
+                               (nome, senha_hash, cpf))
+                return "Agricultor registrado com sucesso!"
+        except sqlite3.IntegrityError:
+            return "Erro: CPF ou CREA já cadastrado."
+
+def login_usuario(cpf, senha):
+    """Realiza o login e retorna o tipo de usuário (Agricultor ou Agrônomo)."""
+    senha_hash = hash_senha(senha)
+    
+    with sqlite3.connect(DATABASE) as conn:
+        cursor = conn.cursor()
+        
+        # Verifica primeiro na tabela Agricultores
+        cursor.execute("SELECT id, nome FROM Agricultores WHERE cpf = ? AND senha = ?", (cpf, senha_hash))
+        agricultor = cursor.fetchone()
+        
+        if agricultor:
+            return {"tipo": "agricultor", "id": agricultor[0], "nome": agricultor[1]}
+        
+        # Se não encontrou, verifica na tabela Agrônomos
+        cursor.execute("SELECT id, nome FROM Agronomos WHERE cpf = ? AND senha = ?", (cpf, senha_hash))
+        agronomo = cursor.fetchone()
+        
+        if agronomo:
+            return {"tipo": "agronomo", "id": agronomo[0], "nome": agronomo[1]}
+        
+        return "CPF ou senha incorretos."
+    
 if __name__ == '__main__':
     app.run(debug=True)

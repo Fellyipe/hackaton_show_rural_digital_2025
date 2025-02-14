@@ -18,6 +18,7 @@ def init_db():
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nome TEXT NOT NULL,
                 senha TEXT NOT NULL,
+                cpf TEXT UNIQUE NOT NULL,
                 crea TEXT UNIQUE NOT NULL
             );
 
